@@ -129,6 +129,11 @@ function isGtfsRTFeed(feed: MobilityDataFeed): feed is GtfsRTFeed {
 }
 
 function processFeed(feed: MobilityDataFeed): ProcessedFeed {
+  // Skip GBFS feeds - we only handle GTFS and GTFS-RT
+  if (feed.data_type === 'gbfs') {
+    throw new Error('GBFS feeds are not supported in this application');
+  }
+
   const baseFeed: ProcessedFeed = {
     id: feed.id,
     type: feed.data_type,

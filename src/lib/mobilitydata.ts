@@ -1,6 +1,5 @@
-import type { 
-  MobilityDataFeed, 
-  MobilityDataResponse, 
+import type {
+  MobilityDataFeed,
   GtfsFeed,
   GtfsRTFeed,
   GtfsDataset,
@@ -26,7 +25,7 @@ export class MobilityDataClient {
   private async getAccessToken(): Promise<string> {
     // Check if we have a valid token
     if (this.accessToken && Date.now() < this.tokenExpiry) {
-      return this.accessToken;
+      return this.accessToken; // TypeScript knows this is non-null here
     }
 
     const response = await fetch(`${MOBILITY_API_BASE}/tokens`, {
@@ -47,7 +46,7 @@ export class MobilityDataClient {
     this.accessToken = data.access_token;
     // Tokens are valid for 1 hour, set expiry to 55 minutes to be safe
     this.tokenExpiry = Date.now() + (55 * 60 * 1000);
-    return this.accessToken;
+    return this.accessToken!; // We just set it, so it's non-null
   }
 
   private async request<T>(endpoint: string, params?: Record<string, string>): Promise<T> {

@@ -1,36 +1,37 @@
 name: Scheduled Rebuild
 
 on:
-  # schedule:
-  #   # Run daily at 6 AM UTC (1 AM EST / 2 AM EDT)
-  #   - cron: '0 6 * * *'
+  schedule:
+    # Run daily at 6 AM UTC (1 AM EST / 2 AM EDT)
+    - cron: '0 6 * * *'
   workflow_dispatch: # Allow manual triggering
 
-permissions:
-  contents: read
+permissions: {
+
+}
 
 jobs:
   trigger-rebuild:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
         run: |
           git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Trigger rebuild
         run: |
           # Create empty commit to trigger Cloudflare Pages deployment
-          git commit --allow-empty -m "Scheduled rebuild - fetch latest GTFS data"
+          git commit --allow-empty -m "Scheduled rebuild - fetch latest data"
           git push
 
-      # Optional: Trigger Netlify build hook if configured
-      - name: Trigger Netlify build (if configured)
-        if: ${{ secrets.NETLIFY_BUILD_HOOK }}
-        run: |
-          curl -X POST -d {} ${{ secrets.NETLIFY_BUILD_HOOK }}
+      # # Optional: Trigger Netlify build hook if configured
+      # - name: Trigger Netlify build (if configured)
+      #   if: ${{ secrets.NETLIFY_BUILD_HOOK }}
+      #   run: |
+      #     curl -X POST -d {} ${{ secrets.NETLIFY_BUILD_HOOK }}

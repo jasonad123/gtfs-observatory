@@ -14,7 +14,8 @@ export const DC_AGENCIES = [
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Washington Metropolitan Area Transit Authority']
   },
   {
@@ -22,7 +23,8 @@ export const DC_AGENCIES = [
     name: 'ART',
     slug: 'art',
     website: 'https://www.arlingtontransit.com',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Arlington Transit']
   },
   {
@@ -30,7 +32,8 @@ export const DC_AGENCIES = [
     name: 'CUE',
     slug: 'cue',
     website: 'https://www.fairfaxva.gov/Services/CUE-Bus',
-    feedIds: ['mdb-2885'],
+    gtfsFeedIds: ['mdb-2885'],
+    gtfsRtFeedIds: [],
     providers: []
   },
   {
@@ -38,7 +41,8 @@ export const DC_AGENCIES = [
     name: 'DASH',
     slug: 'dash',
     website: 'https://www.dashbus.com',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Alexandria Transit Company']
   },
   {
@@ -46,7 +50,8 @@ export const DC_AGENCIES = [
     name: 'Fairfax Connector',
     slug: 'fairfax-connector',
     website: 'https://www.fairfaxcounty.gov/connector/',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Fairfax Connector']
   },
   {
@@ -54,7 +59,8 @@ export const DC_AGENCIES = [
     name: 'Loudoun County Transit',
     slug: 'loudoun',
     website: 'https://www.loudoun.gov/transit',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Loudoun County Transit']
   },
   {
@@ -62,7 +68,8 @@ export const DC_AGENCIES = [
     name: 'VRE',
     slug: 'vre',
     website: 'https://www.vre.org',
-    feedIds: ['tld-61','tld-1127-vp','tld-1127-tu'],
+    gtfsFeedIds: ['tld-61'],
+    gtfsRtFeedIds: ['tld-1127-vp', 'tld-1127-tu'],
     providers: ['Virginia Railway Express']
   },
   {
@@ -70,7 +77,8 @@ export const DC_AGENCIES = [
     name: 'OmniRide',
     slug: 'omniride',
     website: 'https://omniride.com/',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['OmniRide']
   },
   {
@@ -78,7 +86,8 @@ export const DC_AGENCIES = [
     name: 'Ride On',
     slug: 'ride-on',
     website: 'https://www.montgomerycountymd.gov/dot-transit/',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Ride On']
   },
   {
@@ -86,7 +95,8 @@ export const DC_AGENCIES = [
     name: 'TheBus',
     slug: 'thebus',
     website: 'https://www.princegeorgescountymd.gov/departments-offices/public-works-transportation/metro-and-transportation/prince-georges-countys-thebus',
-    feedIds: [],
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
     providers: ['Prince George\'s County THE BUS']
   },
   {
@@ -94,7 +104,8 @@ export const DC_AGENCIES = [
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
-    feedIds: ['mdb-467'],
+    gtfsFeedIds: ['mdb-467'],
+    gtfsRtFeedIds: [],
     providers: []
   },
   {
@@ -102,7 +113,8 @@ export const DC_AGENCIES = [
     name: 'MTA Commuter Bus',
     slug: 'mta-commuter',
     website: 'https://www.mta.maryland.gov/schedule?type=commuter-bus',
-    feedIds: ['mdb-467'],
+    gtfsFeedIds: ['mdb-467'],
+    gtfsRtFeedIds: [],
     providers: []
   },
 
@@ -199,16 +211,29 @@ function determineAgencyStatus(feeds: ProcessedFeed[]): DCAgency['overallStatus'
 export async function getDCFeeds(): Promise<DCAgency[]> {
   const client = createClient();
   const feedsById = new Map<string, MobilityDataFeed>();
-  
-  // First, fetch feeds by ID if specified
+
+  // First, fetch feeds by ID using type-specific endpoints
   for (const agencyDef of DC_AGENCIES) {
-    if (agencyDef.feedIds && agencyDef.feedIds.length > 0) {
-      for (const feedId of agencyDef.feedIds) {
+    // Fetch GTFS schedule feeds by ID
+    if (agencyDef.gtfsFeedIds && agencyDef.gtfsFeedIds.length > 0) {
+      for (const feedId of agencyDef.gtfsFeedIds) {
         try {
-          const feed = await client.getFeedById(feedId);
+          const feed = await client.getGtfsFeedById(feedId);
           feedsById.set(feedId, feed);
         } catch (error) {
-          console.error(`Failed to fetch feed ${feedId}:`, error);
+          console.error(`Failed to fetch GTFS feed ${feedId}:`, error);
+        }
+      }
+    }
+
+    // Fetch GTFS-RT feeds by ID
+    if (agencyDef.gtfsRtFeedIds && agencyDef.gtfsRtFeedIds.length > 0) {
+      for (const feedId of agencyDef.gtfsRtFeedIds) {
+        try {
+          const feed = await client.getGtfsRtFeedById(feedId);
+          feedsById.set(feedId, feed);
+        } catch (error) {
+          console.error(`Failed to fetch GTFS-RT feed ${feedId}:`, error);
         }
       }
     }
@@ -216,7 +241,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
 
   // Then fetch GTFS and GTFS-RT feeds for DC region
   const allFeeds: MobilityDataFeed[] = [...feedsById.values()];
-  
+
   // Fetch GTFS feeds
   try {
     let offset = 0;
@@ -229,25 +254,25 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
         offset,
         country_code: 'US',
       });
-      
+
       // Filter to DC region
       const dcGtfsFeeds = gtfsFeeds.filter(feed => {
         // Skip if already fetched by ID
         if (feedsById.has(feed.id)) return false;
-        
+
         if (!feed.locations || feed.locations.length === 0) {
-          return DC_AGENCIES.some(agency => 
+          return DC_AGENCIES.some(agency =>
             agency.providers.some(p => feed.provider.includes(p))
           );
         }
-        
-        return feed.locations.some(loc => 
+
+        return feed.locations.some(loc =>
           loc.subdivision_name === 'District of Columbia' ||
           loc.subdivision_name === 'Virginia' ||
           loc.subdivision_name === 'Maryland'
         );
       });
-      
+
       allFeeds.push(...dcGtfsFeeds);
       offset += limit;
       hasMore = gtfsFeeds.length === limit;
@@ -268,25 +293,25 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
         offset,
         country_code: 'US',
       });
-      
+
       // Filter to DC region
       const dcGtfsRtFeeds = gtfsRtFeeds.filter(feed => {
         // Skip if already fetched by ID
         if (feedsById.has(feed.id)) return false;
-        
+
         if (!feed.locations || feed.locations.length === 0) {
-          return DC_AGENCIES.some(agency => 
+          return DC_AGENCIES.some(agency =>
             agency.providers.some(p => feed.provider.includes(p))
           );
         }
-        
-        return feed.locations.some(loc => 
+
+        return feed.locations.some(loc =>
           loc.subdivision_name === 'District of Columbia' ||
           loc.subdivision_name === 'Virginia' ||
           loc.subdivision_name === 'Maryland'
         );
       });
-      
+
       allFeeds.push(...dcGtfsRtFeeds);
       offset += limit;
       hasMore = gtfsRtFeeds.length === limit;
@@ -300,7 +325,11 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
     const agencyFeeds = allFeeds
       .filter(feed => {
         // Match by ID first (most reliable)
-        if (agencyDef.feedIds && agencyDef.feedIds.includes(feed.id)) {
+        const allFeedIds = [
+          ...(agencyDef.gtfsFeedIds || []),
+          ...(agencyDef.gtfsRtFeedIds || [])
+        ];
+        if (allFeedIds.includes(feed.id)) {
           return true;
         }
         // Fall back to provider name matching
@@ -313,7 +342,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
       name: agencyDef.name,
       slug: agencyDef.slug,
       website: agencyDef.website,
-      feedIds: agencyDef.feedIds,
+      feedIds: [...(agencyDef.gtfsFeedIds || []), ...(agencyDef.gtfsRtFeedIds || [])],
       feeds: agencyFeeds,
       overallStatus: determineAgencyStatus(agencyFeeds)
     };

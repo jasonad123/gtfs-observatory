@@ -16,12 +16,12 @@ try {
 }
 ---
 
-<DashboardLayout title="DC GTFS Dashboard">
+<DashboardLayout title="GTFS Observatory">
   <Navigation currentPath="/" />
 
   <header class="page-header">
     <h1>DC Metro Area GTFS Feeds</h1>
-    <p>Real-time status and downloads for regional transit feeds</p>
+    <p>Explore the state of transit data in the DMV</p>
   </header>
 
   {error ? (
@@ -58,7 +58,7 @@ try {
       <p>No feeds found. This could mean:</p>
       <ul>
         <li>The MobilityData API is temporarily unavailable</li>
-        <li>No feeds match the DC region criteria</li>
+        <li>No feeds match the region criteria</li>
         <li>Your API credentials need verification</li>
       </ul>
     </div>

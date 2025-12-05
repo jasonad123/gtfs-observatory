@@ -42,8 +42,8 @@ export const DC_AGENCIES = [
     slug: 'dash',
     website: 'https://www.dashbus.com',
     gtfsFeedIds: [],
-    gtfsRtFeedIds: [],
-    providers: ['Alexandria Transit Company']
+    gtfsRtFeedIds: ['mdb-2843', 'mdb-2844', 'mdb-2845'],
+    providers: ['Alexandria Transit Company (DASH)']
   },
   {
     id: 'fairfax-connector',
@@ -70,7 +70,7 @@ export const DC_AGENCIES = [
     website: 'https://www.vre.org',
     gtfsFeedIds: ['tld-61'],
     gtfsRtFeedIds: ['tld-1127-vp', 'tld-1127-tu'],
-    providers: ['Virginia Railway Express']
+    providers: []
   },
   {
     id: 'omniride',
@@ -79,7 +79,7 @@ export const DC_AGENCIES = [
     website: 'https://omniride.com/',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
-    providers: ['OmniRide']
+    providers: ['Potomac and Rappahannock Transportation Commission (PRTC) Omniride']
   },
   {
     id: 'ride-on',
@@ -95,17 +95,17 @@ export const DC_AGENCIES = [
     name: 'TheBus',
     slug: 'thebus',
     website: 'https://www.princegeorgescountymd.gov/departments-offices/public-works-transportation/metro-and-transportation/prince-georges-countys-thebus',
-    gtfsFeedIds: [],
+    gtfsFeedIds: ['mdb-477'],
     gtfsRtFeedIds: [],
-    providers: ['Prince George\'s County THE BUS']
+    providers: []
   },
   {
     id: 'marc',
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
-    gtfsFeedIds: ['mdb-467'],
-    gtfsRtFeedIds: [],
+    gtfsFeedIds: ['mdb-468'],
+    gtfsRtFeedIds: ['mdb-1619'],
     providers: []
   },
   {

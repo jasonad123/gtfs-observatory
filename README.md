@@ -1,4 +1,4 @@
-# DC GTFS Dashboard
+# GTFS Observatory
 
 A real-time dashboard for monitoring GTFS and GTFS-RT feeds. Built with Astro and powered by the MobilityData Mobility Database API.
 
@@ -7,8 +7,8 @@ A real-time dashboard for monitoring GTFS and GTFS-RT feeds. Built with Astro an
 - Single-page dashboard with agency cards
 - Modal pop-ups for detailed feed information
 - Support for both GTFS Schedule and GTFS Realtime feeds
-- Download options for both MobilityData-hosted and agency-direct feeds
-- Real-time status monitoring
+- Download options for both Mobility Database-hosted and agency-direct feeds
+- Near-real-time status monitoring
 - Responsive design using Pico CSS
 
 ## Prerequisites
@@ -51,7 +51,7 @@ To get your refresh token:
 ### 4. Run Development Server
 
 ```bash
-pnpm run dev
+pnpm dev
 ```
 
 The dashboard will be available at http://localhost:4321
@@ -88,19 +88,19 @@ dc-gtfs-dashboard/
 ### Data Flow
 
 1. At build time, the dashboard fetches all feeds from the MobilityData API
-2. Feeds are filtered to the DC metropolitan region
+2. Feeds are filtered to the region (in this case the DC metro area)
 3. Feeds are grouped by transit agency
 4. The page is statically generated with all feed information
 5. Modal interactions are handled client-side with vanilla JavaScript
 
 ### Agency Configuration
 
-DC area agencies are defined in `src/lib/agencies.ts`. Each agency includes:
+Agencies are defined in `src/lib/agencies.ts`. Each agency includes:
 - ID and display name
 - Website URL
 - Feed IDs (MobilityData IDs in mdb-xxx format) - preferred for precise matching
 - Provider name mappings (used as fallback when feed IDs not available)
-- (optional) colour for branding purposes
+- (optional) Colours for branding purposes
 
 **Feed Matching Strategy**:
 1. **Primary**: Match by MobilityData feed ID (most reliable)
@@ -115,6 +115,7 @@ To add a new agency:
   slug: 'agency-slug',
   website: 'https://agency-website.com',
   color: '#1c335f', // Optional
+  secondaryColor: #308c26 // Optional
   textColor: '#ffffff', // Optional
   gtfsFeedIds: ['mdb-123'], // Optional but recommended
   gtfsRtFeedIds: ['mdb-1234'], // Optional but recommended
@@ -133,15 +134,15 @@ To add a new agency:
 
 The `getDCFeeds()` function:
 1. Fetches all US feeds from MobilityData
-2. Filters by DC region (Virginia, Maryland, District of Columbia)
-3. Matches feeds to known DC agencies
+2. Filters by region (currently set to District of Columbia, Maryland, Virginia)
+3. Matches feeds to known regional agencies
 4. Processes feed metadata for display
 5. Groups feeds by agency with status indicators
 
 ## Building for Production
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
 The static site will be generated in the `dist/` directory.
@@ -151,6 +152,7 @@ The static site will be generated in the `dist/` directory.
 This is a static site and can be deployed to:
 
 - Cloudflare Pages
+- Cloudflare Workers
 - Netlify
 - Vercel
 - GitHub Pages
@@ -162,13 +164,14 @@ This is a static site and can be deployed to:
 2. Set build command: `pnpm run build`
 3. Set output directory: `dist`
 4. Add environment variable: `MOBILITY_API_KEY`
-5. Configure automatic rebuilds (recommended: every 6-24 hours)
+5. Configure automatic rebuilds (recommended: every 6-24 hours) using Deploy Hooks
 
 ### Scheduled Builds
 
 To keep feed data current, set up scheduled rebuilds:
 
-- Cloudflare: Use Cron Triggers
+- Cloudflare Pages: Use Deploy Hooks
+- Cloudflare Workers: Use Trigger Events
 - Netlify: Use Build Hooks with external cron service
 - GitHub Actions: Use scheduled workflows
 
@@ -190,38 +193,17 @@ Potential enhancements:
 
 - Historical validation tracking (store results in Git or database)
 - GTFS-RT proxy endpoints (use Astro server endpoints)
-- Feed quality metrics and scoring
-- Service alert aggregation
-- RSS feeds for monitoring
-- Email notifications for feed issues
 
 ## MobilityData API
 
 This project uses the MobilityData Mobility Database API:
 - Docs: https://github.com/MobilityData/mobility-feed-api
+- Catalogs repo: https://github.com/MobilityData/mobility-database-catalogs
 - Database: https://mobilitydatabase.org
 
 API Rate Limits:
 - Non-cached requests: 100/hour per user
 - Cached/repeated requests: More lenient
-
-## Covered Transit Agencies
-
-Current scope includes:
-
-- WMATA (Metrorail + Metrobus)
-- ART (Arlington Transit)
-- CUE (City of Fairfax)
-- DASH (Alexandria)
-- Fairfax Connector (Fairfax County)
-- Loudoun County Transit
-- OmniRide (Prince William County)
-- Ride On (Montgomery County)
-- VRE (Virginia Railway Express)
-- TheBus (Prince George's County)
-- MARC
-- MTA Maryland Commuer Bus
-
 
 ## Troubleshooting
 
@@ -229,7 +211,7 @@ Current scope includes:
 
 Check:
 1. Environment variable is set correctly in `.env`
-2. MobilityData API is accessible
+2. Mobility Database API is accessible
 3. Your refresh token is valid (check account settings)
 4. Network connectivity
 
@@ -258,7 +240,8 @@ pnpm run astro check
 ### Preview Production Build
 
 ```bash
-pnpm run preview
+pnpm build
+pnpm preview
 ```
 
 ## License
@@ -269,8 +252,6 @@ This project is open source. Individual GTFS feeds are subject to their respecti
 
 Contributions welcome! Potential TODOs include:
 
-- Additional DC area agencies
-- Historical trend tracking
 - Real-time feed health monitoring
 - Agency logo integration
 
@@ -280,3 +261,7 @@ Contributions welcome! Potential TODOs include:
 - Transit agencies for providing open data
 - Pico CSS for minimal styling framework
 - Siemens for providing icons from the iX design system
+
+## Disclaimers
+> [!NOTE]
+> **Generative AI:** The code for this project was developed with the help of generative AI tools, including Claude and Claude Code. While all outputs have been *lovingly* reviewed and tested, users should validate results independently before use in production environments.

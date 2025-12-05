@@ -12,6 +12,8 @@
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@astrojs/ts-plugin": "^1.10.6",
+    "@fontsource/instrument-sans": "^5.2.8",
+    "@fontsource/red-hat-display": "^5.2.8",
     "@picocss/pico": "^2.1.1",
     "astro": "^5.16.4",
     "typescript": "^5.9.3"

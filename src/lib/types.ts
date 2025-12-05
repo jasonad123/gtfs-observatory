@@ -197,8 +197,8 @@ export interface LicenseWithRules extends LicenseBase {
   license_rules: LicenseRule[];
 }
 
-// DC-specific types
-export interface DCAgency {
+// Agency-specific types
+export interface TransitAgency {
   id: string;
   name: string;
   slug: string;

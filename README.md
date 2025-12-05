@@ -1,6 +1,6 @@
 # DC GTFS Dashboard
 
-A real-time dashboard for monitoring GTFS and GTFS-RT feeds across the Washington DC metropolitan area. Built with Astro and powered by the MobilityData Mobility Database API.
+A real-time dashboard for monitoring GTFS and GTFS-RT feeds. Built with Astro and powered by the MobilityData Mobility Database API.
 
 ## Features
 
@@ -61,6 +61,7 @@ The dashboard will be available at http://localhost:4321
 ```
 dc-gtfs-dashboard/
 ├── src/
+│   └── assets/              # Miscellaneous assets
 │   ├── components/          # Reusable Astro components
 │   │   ├── AgencyCard.astro
 │   │   └── AgencyModal.astro
@@ -77,7 +78,7 @@ dc-gtfs-dashboard/
 │   └── styles/              # Global styles
 │       └── global.css
 ├── public/                  # Static assets
-│   └── agency-logos/        # Place agency logos here
+│   └── icons/               # Various icons
 ├── data/                    # Data storage (optional)
 └── package.json
 ```
@@ -99,6 +100,7 @@ DC area agencies are defined in `src/lib/agencies.ts`. Each agency includes:
 - Website URL
 - Feed IDs (MobilityData IDs in mdb-xxx format) - preferred for precise matching
 - Provider name mappings (used as fallback when feed IDs not available)
+- (optional) colour for branding purposes
 
 **Feed Matching Strategy**:
 1. **Primary**: Match by MobilityData feed ID (most reliable)
@@ -112,16 +114,20 @@ To add a new agency:
   name: 'Agency Display Name',
   slug: 'agency-slug',
   website: 'https://agency-website.com',
-  feedIds: ['mdb-123', 'mdb-456'], // Optional but recommended
+  color: '#1c335f', // Optional
+  textColor: '#ffffff', // Optional
+  gtfsFeedIds: ['mdb-123'], // Optional but recommended
+  gtfsRtFeedIds: ['mdb-1234'], // Optional but recommended
   providers: ['Official Provider Name in MobilityData'] // Fallback
 }
 ```
 
 **Finding Feed IDs**:
+
 1. Visit https://mobilitydatabase.org
 2. Search for your agency
-3. Note the feed ID(s) from the feed details or URL (format: mdb-xxx)
-4. Add to the `feedIds` array in agency configuration
+3. Note the feed ID(s) from the feed details or URL (format: mdb-xxx or tld-xxx)
+4. Add to the `gtfsFeedIds` or `gtfsRtFeedIds` array in agency configuration
 
 ### Feed Processing
 
@@ -261,10 +267,9 @@ This project is open source. Individual GTFS feeds are subject to their respecti
 
 ## Contributing
 
-Contributions welcome! Areas for improvement:
+Contributions welcome! Potential TODOs include:
 
 - Additional DC area agencies
-- Better validation result display
 - Historical trend tracking
 - Real-time feed health monitoring
 - Agency logo integration
@@ -274,3 +279,4 @@ Contributions welcome! Areas for improvement:
 - MobilityData for maintaining the Mobility Database
 - Transit agencies for providing open data
 - Pico CSS for minimal styling framework
+- Siemens for providing icons from the iX design system

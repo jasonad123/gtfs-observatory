@@ -1,5 +1,5 @@
 import type { 
-  DCAgency, 
+  TransitAgency, 
   MobilityDataFeed, 
   GtfsFeed,
   GtfsRTFeed,
@@ -8,13 +8,13 @@ import type {
 } from './types';
 import { createClient } from './mobilitydata';
 
-export const DC_AGENCIES = [
+export const TRANSIT_AGENCIES = [
   {
     id: 'wmata',
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
-    color: '#3e2723', // WMATA brown
+    color: '#3a2c26', // WMATA brown
     textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
@@ -25,6 +25,8 @@ export const DC_AGENCIES = [
     name: 'ART',
     slug: 'art',
     website: 'https://www.arlingtontransit.com',
+    color: '#006641', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Arlington Transit']
@@ -43,6 +45,8 @@ export const DC_AGENCIES = [
     name: 'DASH',
     slug: 'dash',
     website: 'https://www.dashbus.com',
+    color: '#1c335f', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: ['mdb-2843', 'mdb-2844', 'mdb-2845'],
     providers: ['Alexandria Transit Company (DASH)']
@@ -52,6 +56,8 @@ export const DC_AGENCIES = [
     name: 'Fairfax Connector',
     slug: 'fairfax-connector',
     website: 'https://www.fairfaxcounty.gov/connector/',
+    color: '#e63c2f', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Fairfax Connector']
@@ -79,6 +85,8 @@ export const DC_AGENCIES = [
     name: 'OmniRide',
     slug: 'omniride',
     website: 'https://omniride.com/',
+    color: '#68a51d', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Potomac and Rappahannock Transportation Commission (PRTC) Omniride']
@@ -88,6 +96,8 @@ export const DC_AGENCIES = [
     name: 'Ride On',
     slug: 'ride-on',
     website: 'https://www.montgomerycountymd.gov/dot-transit/',
+    color: '#0079c2', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Ride On']
@@ -97,6 +107,8 @@ export const DC_AGENCIES = [
     name: 'TheBus',
     slug: 'thebus',
     website: 'https://www.princegeorgescountymd.gov/departments-offices/public-works-transportation/metro-and-transportation/prince-georges-countys-thebus',
+    color: '#f8cb4c', 
+    textColor: '#243c7e',
     gtfsFeedIds: ['mdb-477'],
     gtfsRtFeedIds: [],
     providers: []
@@ -106,6 +118,8 @@ export const DC_AGENCIES = [
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
+    color: '#F27428', 
+    textColor: '#062B51',
     gtfsFeedIds: ['mdb-468'],
     gtfsRtFeedIds: ['mdb-1619'],
     providers: []
@@ -201,7 +215,7 @@ function processFeed(feed: MobilityDataFeed): ProcessedFeed {
   return baseFeed;
 }
 
-function determineAgencyStatus(feeds: ProcessedFeed[]): DCAgency['overallStatus'] {
+function determineAgencyStatus(feeds: ProcessedFeed[]): TransitAgency['overallStatus'] {
   if (feeds.length === 0) return 'unknown';
   
   const hasError = feeds.some(f => f.status === 'inactive' || f.status === 'deprecated');
@@ -216,12 +230,12 @@ function determineAgencyStatus(feeds: ProcessedFeed[]): DCAgency['overallStatus'
   return 'issues';
 }
 
-export async function getDCFeeds(): Promise<DCAgency[]> {
+export async function getDCFeeds(): Promise<TransitAgency[]> {
   const client = createClient();
   const feedsById = new Map<string, MobilityDataFeed>();
 
   // First, fetch feeds by ID using type-specific endpoints
-  for (const agencyDef of DC_AGENCIES) {
+  for (const agencyDef of TRANSIT_AGENCIES) {
     // Fetch GTFS schedule feeds by ID
     if (agencyDef.gtfsFeedIds && agencyDef.gtfsFeedIds.length > 0) {
       for (const feedId of agencyDef.gtfsFeedIds) {
@@ -269,7 +283,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
         if (feedsById.has(feed.id)) return false;
 
         if (!feed.locations || feed.locations.length === 0) {
-          return DC_AGENCIES.some(agency =>
+          return TRANSIT_AGENCIES.some(agency =>
             agency.providers.some(p => feed.provider.includes(p))
           );
         }
@@ -308,7 +322,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
         if (feedsById.has(feed.id)) return false;
 
         if (!feed.locations || feed.locations.length === 0) {
-          return DC_AGENCIES.some(agency =>
+          return TRANSIT_AGENCIES.some(agency =>
             agency.providers.some(p => feed.provider.includes(p))
           );
         }
@@ -350,7 +364,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
   }
 
   // Build agencies with matched feeds
-  const agencies: DCAgency[] = DC_AGENCIES.map(agencyDef => {
+  const agencies: TransitAgency[] = TRANSIT_AGENCIES.map(agencyDef => {
     const agencyFeeds = allFeeds
       .filter(feed => {
         // Match by ID first (most reliable)

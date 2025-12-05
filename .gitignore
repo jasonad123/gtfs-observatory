@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Claude Code
 .claude/
+
+# Mobility Database API - should be downloaded fresh regularly and each time the project is initialized
+reference/DatabaseCatalogAPI.yaml

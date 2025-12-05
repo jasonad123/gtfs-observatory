@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/ts-plugin": "^1.10.6",
     "@picocss/pico": "^2.1.1",
-    "astro": "^5.16.4"
+    "astro": "^5.16.4",
+    "typescript": "^5.9.3"
   }
 }

@@ -30,8 +30,8 @@ export const DC_AGENCIES = [
     name: 'CUE',
     slug: 'cue',
     website: 'https://www.fairfaxva.gov/Services/CUE-Bus',
-    feedIds: [],
-    providers: ['City of Fairfax CUE']
+    feedIds: ['mdb-2885'],
+    providers: []
   },
   {
     id: 'dash',
@@ -39,7 +39,7 @@ export const DC_AGENCIES = [
     slug: 'dash',
     website: 'https://www.dashbus.com',
     feedIds: [],
-    providers: ['City of Alexandria DASH']
+    providers: ['Alexandria Transit Company']
   },
   {
     id: 'fairfax-connector',
@@ -62,7 +62,7 @@ export const DC_AGENCIES = [
     name: 'VRE',
     slug: 'vre',
     website: 'https://www.vre.org',
-    feedIds: [],
+    feedIds: ['tld-61','tld-1127-vp','tld-1127-tu'],
     providers: ['Virginia Railway Express']
   },
   {
@@ -94,16 +94,16 @@ export const DC_AGENCIES = [
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
-    feedIds: [],
-    providers: ['Maryland Transit Administration']
+    feedIds: ['mdb-467'],
+    providers: []
   },
   {
     id: 'mta-commuter',
     name: 'MTA Commuter Bus',
     slug: 'mta-commuter',
     website: 'https://www.mta.maryland.gov/schedule?type=commuter-bus',
-    feedIds: [],
-    providers: ['Maryland Transit Administration']
+    feedIds: ['mdb-467'],
+    providers: []
   },
 
 ];

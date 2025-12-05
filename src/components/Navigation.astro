@@ -8,31 +8,16 @@ interface Props {
 const { currentPath = '/', logoSrc = '/service-glyph-short.svg', logoAlt = 'DC GTFS Dashboard' } = Astro.props;
 
 const navItems = [
-  { label: 'Feeds', href: '/' },
-  { label: 'FAQ', href: '/faq' }
+  { label: 'Feeds', href: '/', icon: '/icons/ix--live-feed.svg' },
+  { label: 'FAQ', href: '/faq', icon: '/icons/ix--question.svg' }
 ];
 ---
 
 <header class="nav-header">
   <div class="nav-container">
     <a class="nav-logo" href="/" aria-label="Home">
-      <svg class="nav-logo-img" viewBox="0 0 128 48" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-        <g transform="matrix(0.050317,0,0,0.050317,35.319742,22.45724)">
-          <text x="0px" y="0px" fill="currentColor" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:243.054px;">GTFS</text>
-          <g transform="matrix(1,0,0,1,0,243.054)">
-            <text x="0px" y="0px" fill="currentColor" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:243.054px;">Observatory</text>
-          </g>
-        </g>
-        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
-          <rect x="54.167" y="52.083" width="208.333" height="208.333" style="fill:#6ebb46;"/>
-        </g>
-        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
-          <rect x="262.5" y="52.083" width="208.333" height="208.333" style="fill:#5d68c4;"/>
-        </g>
-        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
-          <rect x="54.167" y="260.417" width="208.333" height="208.333" style="fill:#818181;"/>
-        </g>
-      </svg>
+      <img src="/logo.svg" alt="" class="nav-logo-icon" aria-hidden="true" />
+      <span class="nav-logo-text">GTFS <br>Observatory</span>
     </a>
 
     <nav class="nav-main">
@@ -43,6 +28,7 @@ const navItems = [
               class={currentPath === item.href ? 'nav-link active' : 'nav-link'}
               href={item.href}
             >
+              <img src={item.icon} alt="" class="nav-link-icon" aria-hidden="true" />
               {item.label}
             </a>
           </li>
@@ -110,28 +96,26 @@ const navItems = [
 
   .nav-logo {
     text-decoration: none;
-    font-size: 1.1rem;
     display: flex;
     align-items: center;
-    color: #000;
+    gap: 0.75rem;
   }
 
-  [data-theme=dark] .nav-logo {
-    color: #fff;
-  }
-
-  .nav-logo:hover {
+  .nav-logo:hover .nav-logo-text {
     color: var(--pico-primary);
   }
 
-  .nav-logo:hover .nav-logo-img {
-    color: var(--pico-primary);
-  }
-
-  .nav-logo-img {
-    height: 2rem;
-    width: auto;
+  .nav-logo-icon {
+    height: 3.5rem;
+    width: 3.5rem;
     display: block;
+  }
+
+  .nav-logo-text {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 700;
+    color: var(--pico-h1-color);
   }
 
   .nav-main {
@@ -159,7 +143,9 @@ const navItems = [
     transition: color 0.2s;
     font-size: 0.95rem;
     padding: 0.25rem 0;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     background: none;
     border: none;
     border-radius: 0;
@@ -173,6 +159,12 @@ const navItems = [
 
   .nav-link.active {
     border-bottom: 2px solid var(--pico-primary);
+  }
+
+  .nav-link-icon {
+    width: 1.1em;
+    height: 1.1em;
+    display: inline-block;
   }
 
   .theme-toggle {

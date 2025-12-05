@@ -1,6 +1,7 @@
 :root {
   --pico-font-size: 16px;
   --pico-line-height: 1.7;
+  --pico-border-radius: 0.5rem;
 }
 
 /* Green color scheme for light mode (Default) */

@@ -14,6 +14,8 @@ export const DC_AGENCIES = [
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
+    color: '#3e2723', // WMATA brown
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Washington Metropolitan Area Transit Authority']
@@ -369,6 +371,8 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
       name: agencyDef.name,
       slug: agencyDef.slug,
       website: agencyDef.website,
+      color: agencyDef.color,
+      textColor: agencyDef.textColor,
       feedIds: [...(agencyDef.gtfsFeedIds || []), ...(agencyDef.gtfsRtFeedIds || [])],
       feeds: agencyFeeds,
       overallStatus: determineAgencyStatus(agencyFeeds)

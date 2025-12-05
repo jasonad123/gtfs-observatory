@@ -204,6 +204,8 @@ export interface DCAgency {
   slug: string;
   logo?: string;
   website?: string;
+  color?: string; // Brand background color for the agency header (hex value)
+  textColor?: string; // Text color for the agency header (hex value)
   feedIds?: string[];
   feeds: ProcessedFeed[];
   overallStatus: 'healthy' | 'issues' | 'error' | 'unknown';

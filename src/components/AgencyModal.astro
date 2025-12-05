@@ -101,12 +101,30 @@ function getAuthenticationLabel(type: number): string {
                   <strong>Validation:</strong>
                   <div class="validation-pills">
                     <span class={`validation-pill ${feed.validation.unique_error_count > 0 ? 'validation-pill-error' : 'validation-pill-success'}`}>
+                      <img
+                        src={feed.validation.unique_error_count > 0 ? '/icons/ix--warning-octagon.svg' : '/icons/ix--success.svg'}
+                        alt=""
+                        class="validation-icon"
+                        aria-hidden="true"
+                      />
                       {feed.validation.unique_error_count} errors
                     </span>
                     <span class="validation-pill validation-pill-warning">
+                      <img
+                        src="/icons/ix--alarm.svg"
+                        alt=""
+                        class="validation-icon"
+                        aria-hidden="true"
+                      />
                       {feed.validation.unique_warning_count} warnings
                     </span>
                     <span class="validation-pill validation-pill-info">
+                      <img
+                        src="/icons/ix--about.svg"
+                        alt=""
+                        class="validation-icon"
+                        aria-hidden="true"
+                      />
                       {feed.validation.unique_info_count} info notices
                     </span>
                   </div>
@@ -121,9 +139,7 @@ function getAuthenticationLabel(type: number): string {
               {feed.authentication && feed.authentication.type > 0 && (
                 <p class="feed-meta auth-info">
                   <strong>
-                    <svg class="auth-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                      <path fill="currentColor" fill-rule="evenodd" d="M213.333 42.665c41.238 0 74.667 33.43 74.667 74.667c0 39.862-31.238 72.429-70.57 74.556l-4.097.11c-41.237 0-74.666-33.429-74.666-74.666c0-39.863 31.238-72.43 70.57-74.556zm149.334 320.001h-.006V320l.144-2.488c1.232-10.61 10.249-18.846 21.19-18.846l2.488.144c10.61 1.232 18.845 10.249 18.845 21.19v42.666zm-64.006 21.332v-21.332h21.334v-42.667c0-16.788 6.464-32.067 17.039-43.483C348.724 263.898 365.437 256 383.995 256c35.346 0 64 28.653 64 64v42.666h21.333v106.667H298.661zm-47.994-149.333c27.181 0 52.1 9.959 71.497 26.523c-10.165 10.684-17.589 23.998-21.147 38.817c-11.838-13.062-28.253-21.497-46.442-22.559l-3.908-.114H176c-36.708 0-67.166 30.026-69.223 68.392l-.11 4.141v34.133h170.661v42.667H64v-76.8c0-62.033 47.668-112.614 107.383-115.104l4.617-.096zm-69.334-117.333c0-17.673 14.327-32 32-32s32 14.327 32 32s-14.327 32-32 32s-32-14.327-32-32" clip-rule="evenodd" />
-                    </svg>
+                    <img src="/icons/ix--user-lock.svg" alt="" class="auth-icon" aria-hidden="true" />
                     Authentication:
                   </strong> {getAuthenticationLabel(feed.authentication.type)}
                   {feed.authentication.infoUrl && (
@@ -158,6 +174,7 @@ function getAuthenticationLabel(type: number): string {
                   download
                   role="button"
                 >
+                  <img src="/icons/ix--cloud-download.svg" alt="" class="btn-icon" aria-hidden="true" />
                   Download (MobilityData)
                 </a>
               )}
@@ -169,6 +186,7 @@ function getAuthenticationLabel(type: number): string {
                   rel="noopener"
                   role="button"
                 >
+                  <img src="/icons/ix--download.svg" alt="" class="btn-icon" aria-hidden="true" />
                   {feed.authentication?.type ? 'Access Direct (Auth Required)' : 'Download (Direct)'}
                 </a>
               )}
@@ -234,9 +252,7 @@ function getAuthenticationLabel(type: number): string {
               {feed.authentication && feed.authentication.type > 0 && (
                 <p class="feed-meta auth-info">
                   <strong>
-                    <svg class="auth-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                      <path fill="currentColor" fill-rule="evenodd" d="M213.333 42.665c41.238 0 74.667 33.43 74.667 74.667c0 39.862-31.238 72.429-70.57 74.556l-4.097.11c-41.237 0-74.666-33.429-74.666-74.666c0-39.863 31.238-72.43 70.57-74.556zm149.334 320.001h-.006V320l.144-2.488c1.232-10.61 10.249-18.846 21.19-18.846l2.488.144c10.61 1.232 18.845 10.249 18.845 21.19v42.666zm-64.006 21.332v-21.332h21.334v-42.667c0-16.788 6.464-32.067 17.039-43.483C348.724 263.898 365.437 256 383.995 256c35.346 0 64 28.653 64 64v42.666h21.333v106.667H298.661zm-47.994-149.333c27.181 0 52.1 9.959 71.497 26.523c-10.165 10.684-17.589 23.998-21.147 38.817c-11.838-13.062-28.253-21.497-46.442-22.559l-3.908-.114H176c-36.708 0-67.166 30.026-69.223 68.392l-.11 4.141v34.133h170.661v42.667H64v-76.8c0-62.033 47.668-112.614 107.383-115.104l4.617-.096zm-69.334-117.333c0-17.673 14.327-32 32-32s32 14.327 32 32s-14.327 32-32 32s-32-14.327-32-32" clip-rule="evenodd" />
-                    </svg>
+                    <img src="/icons/ix--user-lock.svg" alt="" class="auth-icon" aria-hidden="true" />
                     Authentication:
                   </strong> {getAuthenticationLabel(feed.authentication.type)}
                   {feed.authentication.infoUrl && (
@@ -253,13 +269,14 @@ function getAuthenticationLabel(type: number): string {
 
             <div class="download-options">
               {feed.downloadUrls.direct && (
-                <a 
-                  href={feed.downloadUrls.direct} 
+                <a
+                  href={feed.downloadUrls.direct}
                   class="download-btn"
                   target="_blank"
                   rel="noopener"
                   role="button"
                 >
+                  <img src="/icons/ix--download.svg" alt="" class="btn-icon" aria-hidden="true" />
                   {feed.authentication?.type ? 'Access Feed URL (Auth Required)' : 'Access Feed URL'}
                 </a>
               )}
@@ -423,6 +440,15 @@ function getAuthenticationLabel(type: number): string {
     font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .validation-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
   }
 
   .validation-pill-error {
@@ -459,12 +485,24 @@ function getAuthenticationLabel(type: number): string {
   .download-btn {
     margin: 0;
     white-space: nowrap;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-icon {
+    width: 1.2em;
+    height: 1.2em;
+    display: inline-block;
   }
 
   .feed-link-btn {
     margin: 0;
     white-space: nowrap;
     font-size: 0.875rem;
+    padding: 0.5rem 0.875rem;
     background-color: #5d68c4;
     border-color: #5d68c4;
   }

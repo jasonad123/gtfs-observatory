@@ -173,6 +173,7 @@ function processFeed(feed: MobilityDataFeed): ProcessedFeed {
       baseFeed.downloadUrls.mobilityData = feed.latest_dataset.hosted_url;
       baseFeed.lastUpdated = feed.latest_dataset.downloaded_at;
       baseFeed.validation = feed.latest_dataset.validation_report;
+      baseFeed.datasetId = feed.latest_dataset.id;
     }
     if (feed.source_info?.producer_url) {
       baseFeed.downloadUrls.direct = feed.source_info.producer_url;
@@ -325,6 +326,27 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
     console.error('Failed to fetch GTFS-RT feeds:', error);
   }
 
+  // Process all feeds
+  const processedFeedsMap = new Map<string, ProcessedFeed>();
+  for (const feed of allFeeds) {
+    const processed = processFeed(feed);
+    processedFeedsMap.set(feed.id, processed);
+  }
+
+  // Fetch fresh validation data for GTFS feeds with datasets
+  for (const [feedId, processedFeed] of processedFeedsMap.entries()) {
+    if (processedFeed.type === 'gtfs' && processedFeed.datasetId) {
+      try {
+        const dataset = await client.getGtfsDatasetById(processedFeed.datasetId);
+        if (dataset.validation_report) {
+          processedFeed.validation = dataset.validation_report;
+        }
+      } catch (error) {
+        console.error(`Failed to fetch dataset ${processedFeed.datasetId} for feed ${feedId}:`, error);
+      }
+    }
+  }
+
   // Build agencies with matched feeds
   const agencies: DCAgency[] = DC_AGENCIES.map(agencyDef => {
     const agencyFeeds = allFeeds
@@ -340,7 +362,7 @@ export async function getDCFeeds(): Promise<DCAgency[]> {
         // Fall back to provider name matching
         return agencyDef.providers.some(p => feed.provider.includes(p));
       })
-      .map(processFeed);
+      .map(feed => processedFeedsMap.get(feed.id)!);
 
     return {
       id: agencyDef.id,

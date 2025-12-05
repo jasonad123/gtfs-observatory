@@ -220,6 +220,7 @@ export interface ProcessedFeed {
   };
   lastUpdated?: string;
   validation?: ValidationReport;
+  datasetId?: string; // ID of the latest dataset for GTFS feeds
   realtimeTypes?: EntityType[];
   locations?: Location[];
   boundingBox?: BoundingBox;

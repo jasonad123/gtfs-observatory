@@ -6,10 +6,11 @@ interface Props {
   status: 'healthy' | 'issues' | 'error' | 'unknown';
   website?: string;
   color?: string;
+  secondaryColor?: string;
   textColor?: string;
 }
 
-const { agencyId, name, feedCount, status, website, color, textColor } = Astro.props;
+const { agencyId, name, feedCount, status, website, color, secondaryColor, textColor } = Astro.props;
 
 const statusLabels = {
   healthy: 'Operational',
@@ -19,7 +20,7 @@ const statusLabels = {
 };
 ---
 
-<article class="agency-card" data-agency-id={agencyId} style={color ? `--agency-color: ${color}; --agency-text-color: ${textColor || 'inherit'}` : undefined}>
+<article class="agency-card" data-agency-id={agencyId} style={color ? `--agency-color: ${color}; --agency-secondary-color: ${secondaryColor || color}; --agency-text-color: ${textColor || 'inherit'}` : undefined}>
   <header>
     <h3>{name}</h3>
     <span class={`status-badge status-${status}`}>
@@ -34,7 +35,7 @@ const statusLabels = {
   <footer>
     {website && (
       <a href={website} target="_blank" rel="noopener" class="website-btn" role="button">
-        Visit the {name} website
+        Visit the {name} website 
       </a>
     )}
     <button class="view-details-btn" data-agency-id={agencyId}>
@@ -64,7 +65,13 @@ const statusLabels = {
     gap: 1rem;
     margin-bottom: 1rem;
     padding: 1.25rem 1.25rem 1.25rem;
-    background-color: var(--agency-color, transparent);
+    background: linear-gradient(
+      120deg,
+      var(--agency-color, transparent) 0%,
+      var(--agency-color, transparent) 65%,
+      var(--agency-secondary-color, transparent) 65%,
+      var(--agency-secondary-color, transparent) 100%
+    );
     color: var(--agency-text-color, inherit);
     border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
     margin: calc(-1 * var(--pico-block-spacing-vertical)) calc(-1 * var(--pico-block-spacing-horizontal)) 0.75rem;
@@ -128,13 +135,19 @@ const statusLabels = {
     margin: 0;
     padding: 0.625rem 1rem;
     text-align: center;
-    background-color: var(--pico-color-slate-600);
-    border-color: var(--pico-color-slate-600);
+    background-color: var(--pico-color-zinc-600);
+    border-color: var(--pico-color-zinc-600);
+  }
+
+  .btn-icon {
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
   }
 
   .website-btn:hover {
-    background-color: var(--pico-color-slate-500);
-    border-color: var(--pico-color-slate-500);
+    background-color: var(--pico-color-zinc-500);
+    border-color: var(--pico-color-zinc-500);
   }
 
   .view-details-btn {

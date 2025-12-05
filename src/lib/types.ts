@@ -205,6 +205,7 @@ export interface TransitAgency {
   logo?: string;
   website?: string;
   color?: string; // Brand background color for the agency header (hex value)
+  secondaryColor?: string; // Optional secondary brand color for angled split in header (hex value)
   textColor?: string; // Text color for the agency header (hex value)
   feedIds?: string[];
   feeds: ProcessedFeed[];

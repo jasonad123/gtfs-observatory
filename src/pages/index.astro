@@ -20,7 +20,7 @@ try {
   <Navigation currentPath="/" />
 
   <header class="page-header">
-    <h1>DC Metro Area GTFS Feeds</h1>
+    <h1>DMV GTFS Observatory</h1>
     <p>Explore the state of transit data in the DMV</p>
   </header>
 
@@ -28,7 +28,8 @@ try {
     <div class="error-state">
       <h2>Unable to Load Feeds</h2>
       <p>{error}</p>
-      <p>Please check your environment configuration and try again.</p>
+      <p>Visitors: please contact the maintainer of this project for further assistance.</p>
+      <p>Maintainers: Please check your environment configuration and try again.</p>
     </div>
   ) : agencies && agencies.length > 0 ? (
     <>
@@ -41,6 +42,7 @@ try {
             status={agency.overallStatus}
             website={agency.website}
             color={agency.color}
+            secondaryColor={agency.secondaryColor}
             textColor={agency.textColor}
           />
         ))}

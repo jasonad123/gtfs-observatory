@@ -53,11 +53,11 @@ function getAuthenticationLabel(type: number): string {
       <div class="modal-header-links">
         {website && (
           <a href={website} target="_blank" rel="noopener">
-            Visit Agency Website
+            Visit agency website
           </a>
         )}
         <a href={`https://mobilitydatabase.org/?feeds=${encodeURIComponent(agencyName)}`} target="_blank" rel="noopener" class="search-link">
-          Search on MobilityData
+          Search on Mobility Database
         </a>
       </div>
     </header>
@@ -176,7 +176,7 @@ function getAuthenticationLabel(type: number): string {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
                     <path fill="currentColor" fill-rule="evenodd" d="m149.57 185.444l-32.378 8.4c-18.354 4.762-31.859 21.49-31.859 41.264c0 23.541 19.084 42.625 42.625 42.625h143.029l77.841.001c42.989 0 77.839-34.85 77.839-77.84s-34.85-77.84-77.839-77.84c-10.847 0-21.072 2.194-30.34 6.122l-31.574 13.383l-19.86-27.956c-11.838-16.665-31.162-27.396-52.991-27.396c-35.859 0-64.928 29.069-64.928 64.928l.006.862zm85.097 211.038l-42.666-42.655l-30.17 30.17l94.157 94.157l94.179-94.153l-30.166-30.174l-42.668 42.656V320.4h71.495c66.553 0 120.506-53.952 120.506-120.506S415.381 79.387 348.828 79.387c-16.671 0-32.551 3.385-46.991 9.506c-19.497-27.446-51.544-45.352-87.774-45.352c-59.423 0-107.594 48.171-107.594 107.594q0 .705.009 1.409c-36.707 9.523-63.811 42.879-63.811 82.564c0 47.106 38.186 85.292 85.291 85.292h106.709z" clip-rule="evenodd" />
                   </svg>
-                  Download (MobilityData)
+                  Download (Mobility Database)
                 </a>
               )}
               {feed.downloadUrls.direct && (
@@ -190,7 +190,7 @@ function getAuthenticationLabel(type: number): string {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
                     <path fill="currentColor" d="M426.666 426.667H85.333V384h341.333zm-149.333-179.5l91.583-91.583l30.167 30.166L256 328.834L112.916 185.75l30.167-30.166l91.583 91.582v-204.5h42.667z" />
                   </svg>
-                  {feed.authentication?.type ? 'Access Direct (Auth Required)' : 'Download (Direct)'}
+                  {feed.authentication?.type ? 'Access direct (auth required)' : 'Download (direct)'}
                 </a>
               )}
               {feed.id && (
@@ -201,7 +201,10 @@ function getAuthenticationLabel(type: number): string {
                   rel="noopener"
                   role="button"
                 >
-                  View on MobilityData
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+	                  <path fill="currentColor" d="m127.977 312.432l-.005 48.7l.03 1.596c1.172 16.27 55.661 42.605 127.998 42.605c39.56 0 76.057-7.718 101.598-20.489c17.584-8.792 25.343-17.165 26.3-21.347l.102-.83v-50.223c-31.272 17.716-77.026 28.89-128 28.89c-50.986 0-96.75-11.18-128.023-28.902m259.234-108.527l-1.627.962c-31.3 18.243-77.743 29.8-129.584 29.8c-51.821 0-98.248-11.548-129.548-29.778q.764.444 1.54.884L127.985 256H128c0 3.819 7.561 12.758 26.401 22.178c25.542 12.77 62.038 20.489 101.599 20.489c39.56 0 76.057-7.719 101.598-20.49C376.438 268.758 384 259.82 384 256v-50.223q1.633-.924 3.21-1.872M256 106.667c-39.56 0-76.057 7.718-101.599 20.489c-18.84 9.42-26.401 18.358-26.401 22.177c0 3.82 7.561 12.758 26.401 22.178C179.943 184.28 216.44 192 256 192s76.057-7.718 101.598-20.49c18.84-9.42 26.402-18.358 26.402-22.177s-7.562-12.757-26.402-22.177c-25.541-12.771-62.038-20.49-101.598-20.49m170.666 256C426.666 409.795 350.256 448 256 448c-92.162 0-167.262-36.526-170.554-82.205l-.113-3.128V149.333q0 .678.021 1.352l-.021-1.352C85.333 102.205 161.743 64 256 64c94.256 0 170.666 38.205 170.666 85.333z" />
+                  </svg>
+                  View on Mobility Database
                 </a>
               )}
             </div>
@@ -285,6 +288,20 @@ function getAuthenticationLabel(type: number): string {
                     <path fill="currentColor" d="M426.666 426.667H85.333V384h341.333zm-149.333-179.5l91.583-91.583l30.167 30.166L256 328.834L112.916 185.75l30.167-30.166l91.583 91.582v-204.5h42.667z" />
                   </svg>
                   {feed.authentication?.type ? 'Access Feed URL (Auth Required)' : 'Access Feed URL'}
+                </a>
+              )}
+              {feed.id && (
+                <a
+                  href={`https://mobilitydatabase.org/feeds/gtfs_rt/${feed.id}`}
+                  class="feed-link-btn"
+                  target="_blank"
+                  rel="noopener"
+                  role="button"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+	                  <path fill="currentColor" d="m127.977 312.432l-.005 48.7l.03 1.596c1.172 16.27 55.661 42.605 127.998 42.605c39.56 0 76.057-7.718 101.598-20.489c17.584-8.792 25.343-17.165 26.3-21.347l.102-.83v-50.223c-31.272 17.716-77.026 28.89-128 28.89c-50.986 0-96.75-11.18-128.023-28.902m259.234-108.527l-1.627.962c-31.3 18.243-77.743 29.8-129.584 29.8c-51.821 0-98.248-11.548-129.548-29.778q.764.444 1.54.884L127.985 256H128c0 3.819 7.561 12.758 26.401 22.178c25.542 12.77 62.038 20.489 101.599 20.489c39.56 0 76.057-7.719 101.598-20.49C376.438 268.758 384 259.82 384 256v-50.223q1.633-.924 3.21-1.872M256 106.667c-39.56 0-76.057 7.718-101.599 20.489c-18.84 9.42-26.401 18.358-26.401 22.177c0 3.82 7.561 12.758 26.401 22.178C179.943 184.28 216.44 192 256 192s76.057-7.718 101.598-20.49c18.84-9.42 26.402-18.358 26.402-22.177s-7.562-12.757-26.402-22.177c-25.541-12.771-62.038-20.49-101.598-20.49m170.666 256C426.666 409.795 350.256 448 256 448c-92.162 0-167.262-36.526-170.554-82.205l-.113-3.128V149.333q0 .678.021 1.352l-.021-1.352C85.333 102.205 161.743 64 256 64c94.256 0 170.666 38.205 170.666 85.333z" />
+                  </svg>
+                  View on Mobility Database
                 </a>
               )}
             </div>

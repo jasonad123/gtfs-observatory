@@ -14,7 +14,7 @@ export const TRANSIT_AGENCIES = [
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
-    color: '#3a2c26', // WMATA brown
+    color: '#3a2c26',
     textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
@@ -37,6 +37,9 @@ export const TRANSIT_AGENCIES = [
     slug: 'cue',
     website: 'https://www.fairfaxva.gov/Services/CUE-Bus',
     gtfsFeedIds: ['mdb-2885'],
+    color: '#015c8d', 
+    secondaryColor: '#4fc0a9',
+    textColor: '#ffffff',
     gtfsRtFeedIds: [],
     providers: []
   },
@@ -48,7 +51,7 @@ export const TRANSIT_AGENCIES = [
     color: '#1c335f', 
     textColor: '#ffffff',
     gtfsFeedIds: [],
-    gtfsRtFeedIds: ['mdb-2843', 'mdb-2844', 'mdb-2845'],
+    gtfsRtFeedIds: [],
     providers: ['Alexandria Transit Company (DASH)']
   },
   {
@@ -67,6 +70,8 @@ export const TRANSIT_AGENCIES = [
     name: 'Loudoun County Transit',
     slug: 'loudoun',
     website: 'https://www.loudoun.gov/transit',
+    color: '#b82d36', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Loudoun County Transit']
@@ -76,6 +81,9 @@ export const TRANSIT_AGENCIES = [
     name: 'VRE',
     slug: 'vre',
     website: 'https://www.vre.org',
+    color: '#df393e',
+    secondaryColor: '#004785',
+    textColor: '#ffffff',
     gtfsFeedIds: ['tld-61'],
     gtfsRtFeedIds: ['tld-1127-vp', 'tld-1127-tu'],
     providers: []
@@ -85,7 +93,8 @@ export const TRANSIT_AGENCIES = [
     name: 'OmniRide',
     slug: 'omniride',
     website: 'https://omniride.com/',
-    color: '#68a51d', 
+    color: '#68a51d',
+    secondaryColor: '#015fa5',
     textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
@@ -111,7 +120,7 @@ export const TRANSIT_AGENCIES = [
     textColor: '#243c7e',
     gtfsFeedIds: ['mdb-477'],
     gtfsRtFeedIds: [],
-    providers: []
+    providers: ['Prince George\'s County (The Bus)']
   },
   {
     id: 'marc',
@@ -119,18 +128,22 @@ export const TRANSIT_AGENCIES = [
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
     color: '#F27428', 
-    textColor: '#062B51',
+    secondaryColor: '#062B51',
+    textColor: '#ffffff',
     gtfsFeedIds: ['mdb-468'],
     gtfsRtFeedIds: ['mdb-1619'],
-    providers: []
+    providers: ['MARC']
   },
   {
     id: 'mta-commuter',
     name: 'MTA Commuter Bus',
     slug: 'mta-commuter',
     website: 'https://www.mta.maryland.gov/schedule?type=commuter-bus',
+    color: '#ffc233',
+    secondaryColor: '#a5272d',
+    textColor: '#212121',
     gtfsFeedIds: ['mdb-467'],
-    gtfsRtFeedIds: [],
+    gtfsRtFeedIds: ['tld-4921-sa'],
     providers: []
   },
 
@@ -386,6 +399,7 @@ export async function getDCFeeds(): Promise<TransitAgency[]> {
       slug: agencyDef.slug,
       website: agencyDef.website,
       color: agencyDef.color,
+      secondaryColor: agencyDef.secondaryColor,
       textColor: agencyDef.textColor,
       feedIds: [...(agencyDef.gtfsFeedIds || []), ...(agencyDef.gtfsRtFeedIds || [])],
       feeds: agencyFeeds,

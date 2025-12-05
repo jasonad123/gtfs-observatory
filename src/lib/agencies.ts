@@ -14,6 +14,7 @@ export const DC_AGENCIES = [
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
+    feedIds: [],
     providers: ['Washington Metropolitan Area Transit Authority']
   },
   {
@@ -21,6 +22,7 @@ export const DC_AGENCIES = [
     name: 'ART',
     slug: 'art',
     website: 'https://www.arlingtontransit.com',
+    feedIds: [],
     providers: ['Arlington Transit']
   },
   {
@@ -28,6 +30,7 @@ export const DC_AGENCIES = [
     name: 'CUE',
     slug: 'cue',
     website: 'https://www.fairfaxva.gov/Services/CUE-Bus',
+    feedIds: [],
     providers: ['City of Fairfax CUE']
   },
   {
@@ -35,6 +38,7 @@ export const DC_AGENCIES = [
     name: 'DASH',
     slug: 'dash',
     website: 'https://www.dashbus.com',
+    feedIds: [],
     providers: ['City of Alexandria DASH']
   },
   {
@@ -42,6 +46,7 @@ export const DC_AGENCIES = [
     name: 'Fairfax Connector',
     slug: 'fairfax-connector',
     website: 'https://www.fairfaxcounty.gov/connector/',
+    feedIds: [],
     providers: ['Fairfax Connector']
   },
   {
@@ -49,6 +54,7 @@ export const DC_AGENCIES = [
     name: 'Loudoun County Transit',
     slug: 'loudoun',
     website: 'https://www.loudoun.gov/transit',
+    feedIds: [],
     providers: ['Loudoun County Transit']
   },
   {
@@ -56,13 +62,15 @@ export const DC_AGENCIES = [
     name: 'VRE',
     slug: 'vre',
     website: 'https://www.vre.org',
+    feedIds: [],
     providers: ['Virginia Railway Express']
   },
   {
     id: 'omniride',
     name: 'OmniRide',
     slug: 'omniride',
-    website: 'https://www.loudoun.gov/transit',
+    website: 'https://omniride.com/',
+    feedIds: [],
     providers: ['OmniRide']
   },
   {
@@ -70,6 +78,7 @@ export const DC_AGENCIES = [
     name: 'Ride On',
     slug: 'ride-on',
     website: 'https://www.montgomerycountymd.gov/dot-transit/',
+    feedIds: [],
     providers: ['Ride On']
   },
   {
@@ -77,6 +86,7 @@ export const DC_AGENCIES = [
     name: 'TheBus',
     slug: 'thebus',
     website: 'https://www.princegeorgescountymd.gov/departments-offices/public-works-transportation/metro-and-transportation/prince-georges-countys-thebus',
+    feedIds: [],
     providers: ['Prince George\'s County THE BUS']
   },
   {
@@ -84,6 +94,7 @@ export const DC_AGENCIES = [
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
+    feedIds: [],
     providers: ['Maryland Transit Administration']
   },
   {
@@ -91,6 +102,7 @@ export const DC_AGENCIES = [
     name: 'MTA Commuter Bus',
     slug: 'mta-commuter',
     website: 'https://www.mta.maryland.gov/schedule?type=commuter-bus',
+    feedIds: [],
     providers: ['Maryland Transit Administration']
   },
 

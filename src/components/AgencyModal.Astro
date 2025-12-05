@@ -34,6 +34,15 @@ function getRealtimeTypeLabel(type: string): string {
   };
   return labels[type] || type;
 }
+
+function getAuthenticationLabel(type: number): string {
+  const labels: Record<number, string> = {
+    0: 'No authentication',
+    1: 'API key (URL parameter)',
+    2: 'API key (HTTP header)'
+  };
+  return labels[type] || 'Authentication required';
+}
 ---
 
 <dialog id={`modal-${agencyId}`} class="agency-modal">
@@ -57,13 +66,76 @@ function getRealtimeTypeLabel(type: string): string {
           <div class="feed-item">
             <div class="feed-header">
               <h4>{feed.name}</h4>
-              <span class={`feed-status status-${feed.status}`}>
-                {feed.status}
-              </span>
+              <div class="feed-badges">
+                <span class={`feed-status status-${feed.status}`}>
+                  {feed.status}
+                </span>
+                {feed.official && (
+                  <span class="official-badge">Official</span>
+                )}
+              </div>
             </div>
-            <p class="feed-meta">
-              Last updated: {formatDate(feed.lastUpdated)}
-            </p>
+            
+            {feed.note && (
+              <p class="feed-note">{feed.note}</p>
+            )}
+
+            <div class="feed-details">
+              <p class="feed-meta">
+                <strong>Last updated:</strong> {formatDate(feed.lastUpdated)}
+              </p>
+
+              {feed.locations && feed.locations.length > 0 && (
+                <p class="feed-meta">
+                  <strong>Service area:</strong> {feed.locations.map(loc => 
+                    [loc.municipality, loc.subdivision_name, loc.country].filter(Boolean).join(', ')
+                  ).join(' • ')}
+                </p>
+              )}
+
+              {feed.validation && (
+                <div class="validation-summary">
+                  <strong>Validation:</strong>
+                  <span class={feed.validation.total_error > 0 ? 'validation-errors' : 'validation-ok'}>
+                    {feed.validation.total_error} errors
+                  </span>
+                  • <span>{feed.validation.total_warning} warnings</span>
+                  • <span>{feed.validation.total_info} info</span>
+                  {feed.validation.url_html && (
+                    <a href={feed.validation.url_html} target="_blank" rel="noopener" class="validation-link">
+                      View Report
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {feed.authentication && feed.authentication.type > 0 && (
+                <p class="feed-meta auth-info">
+                  <strong>⚠️ Authentication:</strong> {getAuthenticationLabel(feed.authentication.type)}
+                  {feed.authentication.infoUrl && (
+                    <>
+                      {' '}
+                      <a href={feed.authentication.infoUrl} target="_blank" rel="noopener">
+                        Details
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
+
+              {feed.license && (
+                <p class="feed-meta">
+                  <strong>License:</strong>
+                  {feed.license.url ? (
+                    <a href={feed.license.url} target="_blank" rel="noopener">
+                      {feed.license.id || 'View License'}
+                    </a>
+                  ) : feed.license.id || 'See provider'}
+                  {feed.license.isSpdx && ' (SPDX)'}
+                </p>
+              )}
+            </div>
+
             <div class="download-options">
               {feed.downloadUrls.mobilityData && (
                 <a 
@@ -79,10 +151,11 @@ function getRealtimeTypeLabel(type: string): string {
                 <a 
                   href={feed.downloadUrls.direct} 
                   class="download-btn secondary"
-                  download
+                  target="_blank"
+                  rel="noopener"
                   role="button"
                 >
-                  Download (Direct)
+                  {feed.authentication?.type ? 'Access Direct (Auth Required)' : 'Download (Direct)'}
                 </a>
               )}
             </div>
@@ -98,15 +171,56 @@ function getRealtimeTypeLabel(type: string): string {
           <div class="feed-item">
             <div class="feed-header">
               <h4>{feed.name}</h4>
-              <span class={`feed-status status-${feed.status}`}>
-                {feed.status}
-              </span>
+              <div class="feed-badges">
+                <span class={`feed-status status-${feed.status}`}>
+                  {feed.status}
+                </span>
+                {feed.official && (
+                  <span class="official-badge">Official</span>
+                )}
+              </div>
             </div>
-            {feed.realtimeTypes && feed.realtimeTypes.length > 0 && (
-              <p class="feed-meta">
-                Types: {feed.realtimeTypes.map(getRealtimeTypeLabel).join(', ')}
-              </p>
+
+            {feed.note && (
+              <p class="feed-note">{feed.note}</p>
             )}
+
+            <div class="feed-details">
+              {feed.realtimeTypes && feed.realtimeTypes.length > 0 && (
+                <p class="feed-meta">
+                  <strong>Types:</strong> {feed.realtimeTypes.map(getRealtimeTypeLabel).join(', ')}
+                </p>
+              )}
+
+              {feed.locations && feed.locations.length > 0 && (
+                <p class="feed-meta">
+                  <strong>Service area:</strong> {feed.locations.map(loc => 
+                    [loc.municipality, loc.subdivision_name].filter(Boolean).join(', ')
+                  ).join(' • ')}
+                </p>
+              )}
+
+              {feed.feedReferences && feed.feedReferences.length > 0 && (
+                <p class="feed-meta">
+                  <strong>Associated GTFS feeds:</strong> {feed.feedReferences.join(', ')}
+                </p>
+              )}
+
+              {feed.authentication && feed.authentication.type > 0 && (
+                <p class="feed-meta auth-info">
+                  <strong>⚠️ Authentication:</strong> {getAuthenticationLabel(feed.authentication.type)}
+                  {feed.authentication.infoUrl && (
+                    <>
+                      {' '}
+                      <a href={feed.authentication.infoUrl} target="_blank" rel="noopener">
+                        Details
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
+            </div>
+
             <div class="download-options">
               {feed.downloadUrls.direct && (
                 <a 
@@ -116,7 +230,7 @@ function getRealtimeTypeLabel(type: string): string {
                   rel="noopener"
                   role="button"
                 >
-                  Access Feed URL
+                  {feed.authentication?.type ? 'Access Feed URL (Auth Required)' : 'Access Feed URL'}
                 </a>
               )}
             </div>
@@ -170,12 +284,19 @@ function getRealtimeTypeLabel(type: string): string {
     font-size: 1.1rem;
   }
 
+  .feed-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
   .feed-status {
     padding: 0.25rem 0.75rem;
     border-radius: 1rem;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .status-active {
@@ -183,15 +304,64 @@ function getRealtimeTypeLabel(type: string): string {
     color: #155724;
   }
 
-  .status-inactive {
+  .status-inactive, .status-deprecated {
     background-color: #f8d7da;
     color: #721c24;
+  }
+
+  .status-development {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .official-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #cfe2ff;
+    color: #084298;
+  }
+
+  .feed-note {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: var(--pico-code-background-color);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .feed-details {
+    margin: 1rem 0;
   }
 
   .feed-meta {
     margin: 0.5rem 0;
     font-size: 0.875rem;
-    color: var(--pico-muted-color);
+  }
+
+  .auth-info {
+    color: var(--pico-del-color);
+  }
+
+  .validation-summary {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  .validation-errors {
+    color: var(--pico-del-color);
+    font-weight: 600;
+  }
+
+  .validation-ok {
+    color: var(--pico-ins-color);
+    font-weight: 600;
+  }
+
+  .validation-link {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
   }
 
   .download-options {

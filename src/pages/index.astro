@@ -1,5 +1,6 @@
 ---
-import Dashboard from '../layouts/Dashboard.astro';
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Navigation from '../components/Navigation.astro';
 import AgencyCard from '../components/AgencyCard.astro';
 import AgencyModal from '../components/AgencyModal.astro';
 import { getDCFeeds } from '../lib/agencies';
@@ -15,7 +16,9 @@ try {
 }
 ---
 
-<Dashboard title="DC GTFS Dashboard">
+<DashboardLayout title="DC GTFS Dashboard">
+  <Navigation currentPath="/" />
+
   <header class="page-header">
     <h1>DC Metro Area GTFS Feeds</h1>
     <p>Real-time status and downloads for regional transit feeds</p>

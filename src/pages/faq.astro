@@ -1,0 +1,244 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Navigation from '../components/Navigation.astro';
+---
+
+<DashboardLayout title="FAQ - DC GTFS Dashboard">
+  <Navigation currentPath="/faq" />
+
+  <header class="page-header">
+    <h1>Frequently Asked Questions</h1>
+    <p>Everything you need to know about GTFS feeds in the DC Metro area</p>
+  </header>
+
+  <div class="faq-container">
+    <section class="faq-section">
+      <h2>About GTFS</h2>
+
+      <details>
+        <summary>What is GTFS?</summary>
+        <div class="faq-answer">
+          <p>GTFS (General Transit Feed Specification) is a standardized format for public transportation schedules and geographic information. It allows transit agencies to publish their data in a format that can be consumed by a wide variety of applications.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What is the difference between GTFS Schedule and GTFS Realtime?</summary>
+        <div class="faq-answer">
+          <p><strong>GTFS Schedule</strong> provides static schedule information including routes, stops, and timetables. This is typically updated weekly or when schedule changes occur.</p>
+          <p><strong>GTFS Realtime</strong> provides real-time updates about vehicle positions, trip updates, and service alerts. This data is updated continuously throughout the day.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What can I do with GTFS data?</summary>
+        <div class="faq-answer">
+          <p>GTFS data can be used to:</p>
+          <ul>
+            <li>Build transit trip planning applications</li>
+            <li>Create real-time vehicle tracking displays</li>
+            <li>Analyze transit service patterns and performance</li>
+            <li>Integrate transit information into mapping applications</li>
+            <li>Research transportation accessibility and equity</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <section class="faq-section">
+      <h2>Using This Dashboard</h2>
+
+      <details>
+        <summary>How often is the data updated?</summary>
+        <div class="faq-answer">
+          <p>This dashboard is rebuilt periodically to fetch the latest feed information from the MobilityData Mobility Database. The "Last updated" timestamp in the footer shows when the data was last refreshed.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What do the status indicators mean?</summary>
+        <div class="faq-answer">
+          <ul>
+            <li><strong>Operational:</strong> All feeds are active and available</li>
+            <li><strong>Minor Issues:</strong> Some feeds may be in development or have mixed status</li>
+            <li><strong>Service Issues:</strong> One or more feeds are inactive or deprecated</li>
+            <li><strong>Unknown:</strong> No feed information available</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>What does "Authentication Required" mean?</summary>
+        <div class="faq-answer">
+          <p>Some feeds require an API key or other authentication to access. This is typically free but requires registration with the transit agency. Click the "Details" link next to the authentication notice to learn how to obtain access.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Should I use MobilityData or Direct downloads?</summary>
+        <div class="faq-answer">
+          <p><strong>MobilityData hosted feeds</strong> are archived snapshots that are validated and stored by the MobilityData organization. They're reliable and don't require authentication.</p>
+          <p><strong>Direct downloads</strong> come straight from the transit agency and are typically more up-to-date, but may require authentication and could have validation issues.</p>
+          <p>For most applications, MobilityData hosted feeds are recommended. Use direct feeds if you need the absolute latest data.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="faq-section">
+      <h2>DC Metro Area Transit</h2>
+
+      <details>
+        <summary>Which agencies are included in this dashboard?</summary>
+        <div class="faq-answer">
+          <p>This dashboard includes major transit agencies serving the DC metropolitan area, including:</p>
+          <ul>
+            <li>WMATA (Metrorail and Metrobus)</li>
+            <li>Arlington Transit (ART)</li>
+            <li>Fairfax Connector</li>
+            <li>Loudoun County Transit</li>
+            <li>Virginia Railway Express (VRE)</li>
+            <li>Ride On (Montgomery County)</li>
+            <li>MARC Train</li>
+            <li>MTA Commuter Bus</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Why isn't my local transit agency listed?</summary>
+        <div class="faq-answer">
+          <p>This dashboard focuses on agencies serving the core DC metropolitan area. If you'd like to see an agency added, you can contact the maintainer or check the MobilityData website directly for feeds from smaller or regional agencies.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="faq-section">
+      <h2>Technical Details</h2>
+
+      <details>
+        <summary>Where does the data come from?</summary>
+        <div class="faq-answer">
+          <p>All feed information is sourced from the <a href="https://mobilitydatabase.org" target="_blank" rel="noopener">MobilityData Mobility Database</a>, a comprehensive catalog of open mobility data maintained by MobilityData.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>What are validation errors and warnings?</summary>
+        <div class="faq-answer">
+          <p><strong>Errors</strong> are critical issues that prevent the feed from working correctly in applications. These should be fixed by the transit agency.</p>
+          <p><strong>Warnings</strong> are best practice violations that won't break applications but may cause suboptimal behavior.</p>
+          <p>A small number of warnings is normal. Many errors usually indicates a problematic feed.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I use this data commercially?</summary>
+        <div class="faq-answer">
+          <p>Most GTFS feeds are published under open licenses that allow commercial use, but you should check the specific license for each feed. License information is displayed in the feed details when available.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="faq-section">
+      <h2>Resources</h2>
+
+      <details>
+        <summary>Where can I learn more about GTFS?</summary>
+        <div class="faq-answer">
+          <ul>
+            <li><a href="https://gtfs.org" target="_blank" rel="noopener">GTFS.org</a> - Official specification and documentation</li>
+            <li><a href="https://mobilitydatabase.org" target="_blank" rel="noopener">MobilityData</a> - Global database of mobility feeds</li>
+            <li><a href="https://gtfs-validator.mobilitydata.org" target="_blank" rel="noopener">GTFS Validator</a> - Tool for validating GTFS feeds</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+  </div>
+</DashboardLayout>
+
+<style>
+  .page-header {
+    text-align: start;
+    margin: 3rem 0;
+    padding: 0 1rem;
+  }
+
+  .page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header p {
+    color: var(--pico-muted-color);
+    font-size: 1.1rem;
+  }
+
+  .faq-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+  }
+
+  .faq-section {
+    margin-bottom: 4rem;
+  }
+
+  .faq-section h2 {
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--pico-primary);
+  }
+
+  details {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background-color: var(--pico-card-background-color);
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
+    font-size: 1.05rem;
+    color: var(--pico-color);
+  }
+
+  summary:hover {
+    color: var(--pico-primary);
+  }
+
+  .faq-answer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--pico-muted-border-color);
+    line-height: 1.6;
+  }
+
+  .faq-answer p {
+    margin: 0.75rem 0;
+  }
+
+  .faq-answer ul {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .faq-answer li {
+    margin: 0.5rem 0;
+  }
+
+  .faq-answer a {
+    color: var(--pico-primary);
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      margin: 2rem 0;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+    }
+  }
+</style>

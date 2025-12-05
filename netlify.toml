@@ -1,0 +1,15 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@astrojs/netlify"
+
+# Redirect rules (optional)
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404

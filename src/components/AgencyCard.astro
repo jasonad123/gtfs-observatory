@@ -28,13 +28,13 @@ const statusLabels = {
     <p>
       <strong>{feedCount}</strong> {feedCount === 1 ? 'feed' : 'feeds'} available
     </p>
+  </div>
+  <footer>
     {website && (
-      <a href={website} target="_blank" rel="noopener" class="external-link">
+      <a href={website} target="_blank" rel="noopener" class="website-btn" role="button">
         Agency Website
       </a>
     )}
-  </div>
-  <footer>
     <button class="view-details-btn" data-agency-id={agencyId}>
       View Feed Details
     </button>
@@ -45,11 +45,14 @@ const statusLabels = {
   .agency-card {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .agency-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--pico-box-shadow);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 
   .agency-card header {
@@ -57,20 +60,24 @@ const statusLabels = {
     justify-content: space-between;
     align-items: flex-start;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    padding: 1.25rem 1.25rem 0.75rem;
   }
 
   .agency-card h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+    line-height: 1.3;
   }
 
   .status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 1.5rem;
+    font-size: 0.7rem;
     font-weight: 600;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
   }
 
   .status-healthy {
@@ -94,19 +101,31 @@ const statusLabels = {
   }
 
   .agency-info {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    flex: 1;
   }
 
   .agency-info p {
-    margin: 0.5rem 0;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
   }
 
-  .external-link {
-    font-size: 0.875rem;
+  .agency-card footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .website-btn {
+    width: 100%;
+    margin: 0;
+    padding: 0.625rem 1rem;
+    text-align: center;
   }
 
   .view-details-btn {
     width: 100%;
     margin: 0;
+    padding: 0.625rem 1rem;
   }
 </style>

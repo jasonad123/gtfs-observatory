@@ -5,7 +5,7 @@ interface Props {
   logoAlt?: string;
 }
 
-const { currentPath = '/', logoSrc, logoAlt = 'DC GTFS Dashboard' } = Astro.props;
+const { currentPath = '/', logoSrc = '/service-glyph-short.svg', logoAlt = 'DC GTFS Dashboard' } = Astro.props;
 
 const navItems = [
   { label: 'Feeds', href: '/' },
@@ -16,11 +16,23 @@ const navItems = [
 <header class="nav-header">
   <div class="nav-container">
     <a class="nav-logo" href="/" aria-label="Home">
-      {logoSrc ? (
-        <img src={logoSrc} alt={logoAlt} class="nav-logo-img" />
-      ) : (
-        <strong>GTFS Observatory</strong>
-      )}
+      <svg class="nav-logo-img" viewBox="0 0 128 48" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <g transform="matrix(0.050317,0,0,0.050317,35.319742,22.45724)">
+          <text x="0px" y="0px" fill="currentColor" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:243.054px;">GTFS</text>
+          <g transform="matrix(1,0,0,1,0,243.054)">
+            <text x="0px" y="0px" fill="currentColor" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:243.054px;">Observatory</text>
+          </g>
+        </g>
+        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
+          <rect x="54.167" y="52.083" width="208.333" height="208.333" style="fill:#6ebb46;"/>
+        </g>
+        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
+          <rect x="262.5" y="52.083" width="208.333" height="208.333" style="fill:#5d68c4;"/>
+        </g>
+        <g transform="matrix(0.050317,0,0,0.050317,3.274498,10.896713)">
+          <rect x="54.167" y="260.417" width="208.333" height="208.333" style="fill:#818181;"/>
+        </g>
+      </svg>
     </a>
 
     <nav class="nav-main">
@@ -101,9 +113,18 @@ const navItems = [
     font-size: 1.1rem;
     display: flex;
     align-items: center;
+    color: #000;
+  }
+
+  [data-theme=dark] .nav-logo {
+    color: #fff;
   }
 
   .nav-logo:hover {
+    color: var(--pico-primary);
+  }
+
+  .nav-logo:hover .nav-logo-img {
     color: var(--pico-primary);
   }
 

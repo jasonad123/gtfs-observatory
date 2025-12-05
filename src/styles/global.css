@@ -3,6 +3,50 @@
   --pico-line-height: 1.7;
 }
 
+/* Green color scheme for light mode (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme=light],
+:root:not([data-theme=dark]),
+:host:not([data-theme=dark]) {
+  --pico-text-selection-color: rgba(110, 187, 70, 0.25);
+  --pico-primary: #4a9033;
+  --pico-primary-background: #56a03d;
+  --pico-primary-underline: rgba(74, 144, 51, 0.5);
+  --pico-primary-hover: #3a7028;
+  --pico-primary-hover-background: #4a9033;
+  --pico-primary-focus: rgba(110, 187, 70, 0.5);
+  --pico-primary-inverse: #fff;
+}
+
+/* Green color scheme for dark mode (Auto) */
+/* Automatically enabled if user has Dark mode enabled */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme]),
+  :host:not([data-theme]) {
+    --pico-text-selection-color: rgba(110, 187, 70, 0.1875);
+    --pico-primary: #6ebb46;
+    --pico-primary-background: #56a03d;
+    --pico-primary-underline: rgba(110, 187, 70, 0.5);
+    --pico-primary-hover: #8ecf6f;
+    --pico-primary-hover-background: #6ebb46;
+    --pico-primary-focus: rgba(110, 187, 70, 0.375);
+    --pico-primary-inverse: #fff;
+  }
+}
+/* Green color scheme for dark mode (Forced) */
+/* Enabled if forced with data-theme="dark" */
+[data-theme=dark] {
+  --pico-text-selection-color: rgba(110, 187, 70, 0.1875);
+  --pico-primary: #6ebb46;
+  --pico-primary-background: #56a03d;
+  --pico-primary-underline: rgba(110, 187, 70, 0.5);
+  --pico-primary-hover: #8ecf6f;
+  --pico-primary-hover-background: #6ebb46;
+  --pico-primary-focus: rgba(110, 187, 70, 0.375);
+  --pico-primary-inverse: #fff;
+}
+
+
 body {
   padding: 0;
 }

@@ -1,0 +1,73 @@
+:root {
+  --pico-font-size: 16px;
+  --pico-line-height: 1.6;
+}
+
+body {
+  padding: 2rem 0;
+}
+
+header.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+header.page-header h1 {
+  margin-bottom: 0.5rem;
+}
+
+header.page-header p {
+  color: var(--pico-muted-color);
+  font-size: 1.1rem;
+}
+
+.agency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .agency-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.external-link::after {
+  content: " ↗";
+  font-size: 0.875em;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+dialog {
+  border: none;
+  border-radius: var(--pico-border-radius);
+  box-shadow: var(--pico-box-shadow);
+  padding: 0;
+}
+
+dialog article {
+  margin: 0;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--pico-del-color);
+}
+
+code {
+  background-color: var(--pico-code-background-color);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}

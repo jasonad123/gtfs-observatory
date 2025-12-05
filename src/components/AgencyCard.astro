@@ -1,0 +1,112 @@
+---
+interface Props {
+  agencyId: string;
+  name: string;
+  feedCount: number;
+  status: 'healthy' | 'issues' | 'error' | 'unknown';
+  website?: string;
+}
+
+const { agencyId, name, feedCount, status, website } = Astro.props;
+
+const statusLabels = {
+  healthy: 'Operational',
+  issues: 'Minor Issues',
+  error: 'Service Issues',
+  unknown: 'Unknown'
+};
+---
+
+<article class="agency-card" data-agency-id={agencyId}>
+  <header>
+    <h3>{name}</h3>
+    <span class={`status-badge status-${status}`}>
+      {statusLabels[status]}
+    </span>
+  </header>
+  <div class="agency-info">
+    <p>
+      <strong>{feedCount}</strong> {feedCount === 1 ? 'feed' : 'feeds'} available
+    </p>
+    {website && (
+      <a href={website} target="_blank" rel="noopener" class="external-link">
+        Agency Website
+      </a>
+    )}
+  </div>
+  <footer>
+    <button class="view-details-btn" data-agency-id={agencyId}>
+      View Feed Details
+    </button>
+  </footer>
+</article>
+
+<style>
+  .agency-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .agency-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--pico-box-shadow);
+  }
+
+  .agency-card header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .agency-card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .status-healthy {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .status-issues {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-unknown {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+
+  .agency-info {
+    margin-bottom: 1rem;
+  }
+
+  .agency-info p {
+    margin: 0.5rem 0;
+  }
+
+  .external-link {
+    font-size: 0.875rem;
+  }
+
+  .view-details-btn {
+    width: 100%;
+    margin: 0;
+  }
+</style>

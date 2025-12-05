@@ -1,0 +1,212 @@
+---
+import type { ProcessedFeed } from '../lib/types';
+
+interface Props {
+  agencyId: string;
+  agencyName: string;
+  website?: string;
+  feeds: ProcessedFeed[];
+}
+
+const { agencyId, agencyName, website, feeds } = Astro.props;
+
+const staticFeeds = feeds.filter(f => f.type === 'gtfs');
+const realtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt');
+
+function formatDate(dateString?: string): string {
+  if (!dateString) return 'Unknown';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/New_York'
+  });
+}
+
+function getRealtimeTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    'vp': 'Vehicle Positions',
+    'tu': 'Trip Updates',
+    'sa': 'Service Alerts'
+  };
+  return labels[type] || type;
+}
+---
+
+<dialog id={`modal-${agencyId}`} class="agency-modal">
+  <article>
+    <header>
+      <button aria-label="Close" rel="prev" class="close-modal"></button>
+      <h2>{agencyName}</h2>
+      {website && (
+        <p>
+          <a href={website} target="_blank" rel="noopener">
+            Visit Agency Website
+          </a>
+        </p>
+      )}
+    </header>
+
+    {staticFeeds.length > 0 && (
+      <section class="feed-section">
+        <h3>GTFS Schedule Feeds</h3>
+        {staticFeeds.map(feed => (
+          <div class="feed-item">
+            <div class="feed-header">
+              <h4>{feed.name}</h4>
+              <span class={`feed-status status-${feed.status}`}>
+                {feed.status}
+              </span>
+            </div>
+            <p class="feed-meta">
+              Last updated: {formatDate(feed.lastUpdated)}
+            </p>
+            <div class="download-options">
+              {feed.downloadUrls.mobilityData && (
+                <a 
+                  href={feed.downloadUrls.mobilityData} 
+                  class="download-btn"
+                  download
+                  role="button"
+                >
+                  Download (MobilityData)
+                </a>
+              )}
+              {feed.downloadUrls.direct && (
+                <a 
+                  href={feed.downloadUrls.direct} 
+                  class="download-btn secondary"
+                  download
+                  role="button"
+                >
+                  Download (Direct)
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </section>
+    )}
+
+    {realtimeFeeds.length > 0 && (
+      <section class="feed-section">
+        <h3>GTFS Realtime Feeds</h3>
+        {realtimeFeeds.map(feed => (
+          <div class="feed-item">
+            <div class="feed-header">
+              <h4>{feed.name}</h4>
+              <span class={`feed-status status-${feed.status}`}>
+                {feed.status}
+              </span>
+            </div>
+            {feed.realtimeTypes && feed.realtimeTypes.length > 0 && (
+              <p class="feed-meta">
+                Types: {feed.realtimeTypes.map(getRealtimeTypeLabel).join(', ')}
+              </p>
+            )}
+            <div class="download-options">
+              {feed.downloadUrls.direct && (
+                <a 
+                  href={feed.downloadUrls.direct} 
+                  class="download-btn"
+                  target="_blank"
+                  rel="noopener"
+                  role="button"
+                >
+                  Access Feed URL
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </section>
+    )}
+
+    {feeds.length === 0 && (
+      <p>No feeds currently available for this agency.</p>
+    )}
+  </article>
+</dialog>
+
+<style>
+  .agency-modal {
+    max-width: 800px;
+  }
+
+  .agency-modal header h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .feed-section {
+    margin: 2rem 0;
+  }
+
+  .feed-section h3 {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+
+  .feed-item {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+  }
+
+  .feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feed-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .feed-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-active {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .feed-meta {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--pico-muted-color);
+  }
+
+  .download-options {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .download-btn {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .close-modal {
+    float: right;
+  }
+</style>

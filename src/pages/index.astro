@@ -1,16 +1,68 @@
 ---
+import Dashboard from '../layouts/Dashboard.astro';
+import AgencyCard from '../components/AgencyCard.astro';
+import AgencyModal from '../components/AgencyModal.astro';
+import { getDCFeeds } from '../lib/agencies';
 
+let agencies;
+let error;
+
+try {
+  agencies = await getDCFeeds();
+} catch (e) {
+  error = e instanceof Error ? e.message : 'Failed to load feeds';
+  console.error('Error loading feeds:', e);
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Dashboard title="DC GTFS Dashboard">
+  <header class="page-header">
+    <h1>DC Metro Area GTFS Feeds</h1>
+    <p>Real-time status and downloads for regional transit feeds</p>
+  </header>
+
+  {error ? (
+    <div class="error-state">
+      <h2>Unable to Load Feeds</h2>
+      <p>{error}</p>
+      <p>Please check your environment configuration and try again.</p>
+    </div>
+  ) : agencies && agencies.length > 0 ? (
+    <>
+      <div class="agency-grid">
+        {agencies.map(agency => (
+          <AgencyCard
+            agencyId={agency.id}
+            name={agency.name}
+            feedCount={agency.feeds.length}
+            status={agency.overallStatus}
+            website={agency.website}
+          />
+        ))}
+      </div>
+
+      {agencies.map(agency => (
+        <AgencyModal
+          agencyId={agency.id}
+          agencyName={agency.name}
+          website={agency.website}
+          feeds={agency.feeds}
+        />
+      ))}
+    </>
+  ) : (
+    <div class="loading-state">
+      <p>No feeds found. This could mean:</p>
+      <ul>
+        <li>The MobilityData API is temporarily unavailable</li>
+        <li>No feeds match the DC region criteria</li>
+        <li>Your API credentials need verification</li>
+      </ul>
+    </div>
+  )}
+</DashboardLayout>
+
+<script>
+  import { initModals } from '../scripts/modal';
+  initModals();
+</script>

@@ -39,7 +39,8 @@ export const TRANSIT_AGENCIES: AgencyDefinition[] = [
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
-    logo: 'WMATA_Logo_2025.svg',
+    color: '#3a2c26', 
+    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Washington Metropolitan Area Transit Authority']

@@ -1,6 +1,7 @@
 # GTFS Observatory
 
-A real-time dashboard for monitoring GTFS and GTFS-RT feeds. Built with Astro and powered by the MobilityData Mobility Database API.
+A *semi*-real-time dashboard for monitoring GTFS and GTFS-RT feeds.
+Built with Astro and powered by the MobilityData Mobility Database API.
 
 ## Features
 
@@ -8,19 +9,25 @@ A real-time dashboard for monitoring GTFS and GTFS-RT feeds. Built with Astro an
 - Modal pop-ups for detailed feed information
 - Support for both GTFS Schedule and GTFS Realtime feeds
 - Download options for both Mobility Database-hosted and agency-direct feeds
-- Near-real-time status monitoring
+- Semi-real-time status monitoring
 - Responsive design using Pico CSS
 
 ## Prerequisites
 
 - Node.js 18 or higher
-- A MobilityData account with API credentials
+- A Mobility Database account with API credentials
 
 ## Setup
 
 ### 1. Clone or Download
 
 If you received this as a directory, navigate to it. Otherwise, extract the files.
+
+```bash
+https://github.com/jasonad123/dmv-gtfs-dev.git
+
+cd dmv-gtfs-dev
+```
 
 ### 2. Install Dependencies
 
@@ -36,13 +43,14 @@ Copy the example environment file:
 cp .env.example .env
 ```
 
-Edit `.env` and add your MobilityData API refresh token:
+Edit `.env` and add your Mobility Database API refresh token:
 
-```
+```bash
 MOBILITY_API_KEY=your_refresh_token_here
 ```
 
 To get your refresh token:
+
 1. Visit https://mobilitydatabase.org
 2. Create a free account
 3. Navigate to Account Details
@@ -61,18 +69,20 @@ The dashboard will be available at http://localhost:4321
 ```
 dc-gtfs-dashboard/
 ├── src/
-│   └── assets/              # Miscellaneous assets
+│   └── assets/              # Assets - these will be transformed by Astro at build time
+│   │   ├── agency-logos     # Load all agency logos here
 │   ├── components/          # Reusable Astro components
 │   │   ├── AgencyCard.astro
 │   │   └── AgencyModal.astro
 │   ├── layouts/             # Page layouts
 │   │   └── DashboardLayout.astro
 │   ├── lib/                 # Business logic and utilities
-│   │   ├── agencies.ts      # DC agency definitions and feed processing
+│   │   ├── agencies.ts      # transit agency definitions and feed processing
 │   │   ├── mobilitydata.ts  # MobilityData API client
 │   │   └── types.ts         # TypeScript type definitions
 │   ├── pages/               # Routes
 │   │   └── index.astro      # Main dashboard page
+│   │   └── faq.astro        # FAQ page
 │   ├── scripts/             # Client-side scripts
 │   │   └── modal.ts         # Modal interaction logic
 │   └── styles/              # Global styles
@@ -96,13 +106,15 @@ dc-gtfs-dashboard/
 ### Agency Configuration
 
 Agencies are defined in `src/lib/agencies.ts`. Each agency includes:
+
 - ID and display name
 - Website URL
-- Feed IDs (MobilityData IDs in mdb-xxx format) - preferred for precise matching
+- Feed IDs (Mobility Database IDs in mdb-xxx format) - preferred for precise matching
 - Provider name mappings (used as fallback when feed IDs not available)
-- (optional) Colours for branding purposes
+- (optional) Colours and logo for branding purposes
 
 **Feed Matching Strategy**:
+
 1. **Primary**: Match by MobilityData feed ID (most reliable)
 2. **Fallback**: Match by provider name (if IDs not specified)
 
@@ -114,8 +126,10 @@ To add a new agency:
   name: 'Agency Display Name',
   slug: 'agency-slug',
   website: 'https://agency-website.com',
+  logo: 'logo.svg', // Optional - logos *must* be placed in src/assets/agency-logos
+  showName: false, // Optional - if using a logo 'true' keeps the text name, 'false' hides text and just shows the logo
   color: '#1c335f', // Optional
-  secondaryColor: #308c26 // Optional
+  secondaryColor: '#308c26', // Optional
   textColor: '#ffffff', // Optional
   gtfsFeedIds: ['mdb-123'], // Optional but recommended
   gtfsRtFeedIds: ['mdb-1234'], // Optional but recommended
@@ -133,6 +147,7 @@ To add a new agency:
 ### Feed Processing
 
 The `getDCFeeds()` function:
+
 1. Fetches all US feeds from MobilityData
 2. Filters by region (currently set to District of Columbia, Maryland, Virginia)
 3. Matches feeds to known regional agencies
@@ -197,11 +212,13 @@ Potential enhancements:
 ## MobilityData API
 
 This project uses the MobilityData Mobility Database API:
+
 - Docs: https://github.com/MobilityData/mobility-feed-api
 - Catalogs repo: https://github.com/MobilityData/mobility-database-catalogs
 - Database: https://mobilitydatabase.org
 
 API Rate Limits:
+
 - Non-cached requests: 100/hour per user
 - Cached/repeated requests: More lenient
 
@@ -210,6 +227,7 @@ API Rate Limits:
 ### "Unable to Load Feeds" Error
 
 Check:
+
 1. Environment variable is set correctly in `.env`
 2. Mobility Database API is accessible
 3. Your refresh token is valid (check account settings)
@@ -218,13 +236,15 @@ Check:
 ### No Feeds Showing
 
 Possible causes:
-1. Agency provider names don't match MobilityData records
+
+1. Agency provider names don't match Mobility Database records
 2. Feed locations aren't properly tagged in the database
 3. All feeds are marked as inactive
 
 ### Modal Not Opening
 
 Check browser console for JavaScript errors. Ensure:
+
 1. Modal script is properly imported
 2. Agency IDs match between cards and modals
 3. Dialog element is supported (modern browsers)
@@ -253,14 +273,13 @@ This project is open source. Individual GTFS feeds are subject to their respecti
 Contributions welcome! Potential TODOs include:
 
 - Real-time feed health monitoring
-- Agency logo integration
 
 ## Acknowledgments
 
-- MobilityData for maintaining the Mobility Database
+- [MobilityData](https://mobilitydata.org) for maintaining the Mobility Database
 - Transit agencies for providing open data
-- Pico CSS for minimal styling framework
-- Siemens for providing icons from the iX design system
+- [Pico CSS](https://picocss.com/) for minimal styling framework
+- [Siemens](https://ix.siemens.io/) for providing icons from the iX design system
 
 ## Disclaimers
 > [!NOTE]

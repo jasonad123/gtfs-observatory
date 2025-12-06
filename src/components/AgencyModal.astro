@@ -86,7 +86,7 @@ function getAuthenticationLabel(type: number): string {
             Visit agency website
           </a>
         )}
-        <a href={`https://mobilitydatabase.org/feeds?q=${encodeURIComponent(agencyName)}`} target="_blank" rel="noopener" class="search-link">
+        <a href={`https://mobilitydatabase.org/feeds?q=${encodeURIComponent(agencyName).replace(/%20/g, "+")}`} target="_blank" rel="noopener" class="search-link">
           Search on Mobility Database
         </a>
       </div>

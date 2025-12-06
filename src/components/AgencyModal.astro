@@ -7,10 +7,13 @@ interface Props {
   agencyName: string;
   website?: string;
   logo?: string;
+  color?: string;
+  secondaryColor?: string;
+  textColor?: string;
   feeds: ProcessedFeed[];
 }
 
-const { agencyId, agencyName, website, logo, feeds } = Astro.props;
+const { agencyId, agencyName, website, logo, color, secondaryColor, textColor, feeds } = Astro.props;
 
 // Dynamically import logo if specified
 const logos = import.meta.glob<{ default: ImageMetadata }>('../assets/agency-logos/*');
@@ -61,7 +64,7 @@ function getAuthenticationLabel(type: number): string {
 ---
 
 <dialog id={`modal-${agencyId}`} class="agency-modal">
-  <article>
+  <article style={color ? `--agency-color: ${color}; --agency-secondary-color: ${secondaryColor || color}; --agency-text-color: ${textColor || 'inherit'}` : undefined}>
     <header>
       <a href="#close" aria-label="Close" rel="prev" class="close-modal"></a>
       <div class="modal-header-top">
@@ -686,6 +689,16 @@ function getAuthenticationLabel(type: number): string {
 
   .agency-modal header {
     padding: 2rem 2rem 1rem;
+    background: linear-gradient(
+      120deg,
+      var(--agency-color, transparent) 0%,
+      var(--agency-color, transparent) 65%,
+      var(--agency-secondary-color, transparent) 65%,
+      var(--agency-secondary-color, transparent) 100%
+    );
+    color: var(--agency-text-color, inherit);
+    border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
+    margin: calc(-1 * var(--pico-block-spacing-vertical)) calc(-1 * var(--pico-block-spacing-horizontal)) 1rem;
   }
 
   .modal-header-top {
@@ -711,6 +724,7 @@ function getAuthenticationLabel(type: number): string {
 
   .agency-modal header h2 {
     margin-bottom: 0;
+    color: inherit;
   }
 
   .modal-header-links {
@@ -721,11 +735,12 @@ function getAuthenticationLabel(type: number): string {
   }
 
   .modal-header-links a {
-    color: var(--pico-primary);
+    color: var(--agency-text-color, var(--pico-primary));
   }
 
   .search-link {
-    color: var(--pico-muted-color);
+    color: var(--agency-text-color, var(--pico-muted-color));
+    opacity: 0.8;
   }
 
   .feed-section {

@@ -158,9 +158,8 @@ export const TRANSIT_AGENCIES: AgencyDefinition[] = [
     website: 'https://www.mta.maryland.gov/marc',
     logo: 'marc.svg',
     showName: false,
-    color: '#ffffff', 
-    secondaryColor: '#F27428',
-    textColor: '#ffffff',
+    color: '#ffffff',
+    textColor: '#004f98',
     gtfsFeedIds: ['mdb-468'],
     gtfsRtFeedIds: ['mdb-1619'],
     providers: ['MARC']

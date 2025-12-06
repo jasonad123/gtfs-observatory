@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/ts-plugin": "^1.10.6",
     "@fontsource/instrument-sans": "^5.2.8",
     "@fontsource/red-hat-display": "^5.2.8",
@@ -18,5 +19,8 @@
     "astro": "^5.16.4",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.53.0"
   }
 }

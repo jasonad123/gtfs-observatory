@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # Mobility Database API - should be downloaded fresh regularly and each time the project is initialized
 reference/DatabaseCatalogAPI.yaml
+
+# Wrangler
+.wrangler/

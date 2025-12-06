@@ -1,16 +1,20 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props {
   agencyId: string;
   name: string;
   feedCount: number;
   status: 'healthy' | 'issues' | 'error' | 'unknown';
   website?: string;
+  logo?: string;
   color?: string;
   secondaryColor?: string;
   textColor?: string;
+  showName?: boolean; // Whether to display agency name text (defaults to true)
 }
 
-const { agencyId, name, feedCount, status, website, color, secondaryColor, textColor } = Astro.props;
+const { agencyId, name, feedCount, status, website, logo, color, secondaryColor, textColor, showName = true } = Astro.props;
 
 const statusLabels = {
   healthy: 'Operational',
@@ -18,11 +22,32 @@ const statusLabels = {
   error: 'Major Issues',
   unknown: 'Unknown'
 };
+
+// Dynamically import logo if specified
+const logos = import.meta.glob<{ default: ImageMetadata }>('../assets/agency-logos/*');
+let logoImage: ImageMetadata | undefined;
+if (logo) {
+  const logoPath = `../assets/agency-logos/${logo}`;
+  const logoModule = await logos[logoPath]?.();
+  logoImage = logoModule?.default;
+}
 ---
 
 <article class="agency-card" data-agency-id={agencyId} style={color ? `--agency-color: ${color}; --agency-secondary-color: ${secondaryColor || color}; --agency-text-color: ${textColor || 'inherit'}` : undefined}>
   <header>
-    <h3>{name}</h3>
+    <div class="header-content">
+      {logoImage && (
+        <Image
+          src={logoImage}
+          alt={`${name} logo`}
+          class="agency-logo"
+          width={120}
+          height={48}
+          loading="eager"
+        />
+      )}
+      {showName && <h3>{name}</h3>}
+    </div>
     <span class={`status-badge status-${status}`}>
       {statusLabels[status]}
     </span>
@@ -75,6 +100,21 @@ const statusLabels = {
     color: var(--agency-text-color, inherit);
     border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
     margin: calc(-1 * var(--pico-block-spacing-vertical)) calc(-1 * var(--pico-block-spacing-horizontal)) 0.75rem;
+  }
+
+  .header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .agency-logo {
+    height: 2.5rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
   }
 
   .agency-card h3 {

@@ -207,6 +207,7 @@ export interface TransitAgency {
   color?: string; // Brand background color for the agency header (hex value)
   secondaryColor?: string; // Optional secondary brand color for angled split in header (hex value)
   textColor?: string; // Text color for the agency header (hex value)
+  showName?: boolean; // Whether to display agency name text on card (defaults to true)
   feedIds?: string[];
   feeds: ProcessedFeed[];
   overallStatus: 'healthy' | 'issues' | 'error' | 'unknown';

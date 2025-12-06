@@ -1,17 +1,30 @@
 ---
+import { Image } from 'astro:assets';
 import type { ProcessedFeed } from '../lib/types';
 
 interface Props {
   agencyId: string;
   agencyName: string;
   website?: string;
+  logo?: string;
   feeds: ProcessedFeed[];
 }
 
-const { agencyId, agencyName, website, feeds } = Astro.props;
+const { agencyId, agencyName, website, logo, feeds } = Astro.props;
 
-const staticFeeds = feeds.filter(f => f.type === 'gtfs');
-const realtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt');
+// Dynamically import logo if specified
+const logos = import.meta.glob<{ default: ImageMetadata }>('../assets/agency-logos/*');
+let logoImage: ImageMetadata | undefined;
+if (logo) {
+  const logoPath = `../assets/agency-logos/${logo}`;
+  const logoModule = await logos[logoPath]?.();
+  logoImage = logoModule?.default;
+}
+
+const staticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status !== 'deprecated');
+const realtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status !== 'deprecated');
+const deprecatedStaticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status === 'deprecated');
+const deprecatedRealtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status === 'deprecated');
 
 function formatDate(dateString?: string): string {
   if (!dateString) return 'Unknown';
@@ -49,7 +62,19 @@ function getAuthenticationLabel(type: number): string {
   <article>
     <header>
       <a href="#close" aria-label="Close" rel="prev" class="close-modal"></a>
-      <h2>{agencyName}</h2>
+      <div class="modal-header-top">
+        <h2>{agencyName}</h2>
+        {logoImage && (
+          <Image
+            src={logoImage}
+            alt={`${agencyName} logo`}
+            class="modal-agency-logo"
+            width={200}
+            height={80}
+            loading="lazy"
+          />
+        )}
+      </div>
       <div class="modal-header-links">
         {website && (
           <a href={website} target="_blank" rel="noopener">
@@ -310,6 +335,68 @@ function getAuthenticationLabel(type: number): string {
       </section>
     )}
 
+    {(deprecatedStaticFeeds.length > 0 || deprecatedRealtimeFeeds.length > 0) && (
+      <details class="deprecated-section">
+        <summary>Deprecated Feeds ({deprecatedStaticFeeds.length + deprecatedRealtimeFeeds.length})</summary>
+
+        {deprecatedStaticFeeds.length > 0 && (
+          <section class="feed-section">
+            <h3>Deprecated GTFS Schedule Feeds</h3>
+            {deprecatedStaticFeeds.map(feed => (
+              <div class="feed-item deprecated-feed">
+                <div class="feed-header">
+                  <h4>{feed.name}</h4>
+                  <div class="feed-badges">
+                    <span class="feed-status status-deprecated">
+                      deprecated
+                    </span>
+                  </div>
+                </div>
+
+                {feed.note && (
+                  <p class="feed-note">{feed.note}</p>
+                )}
+
+                <div class="feed-details">
+                  <p class="feed-meta">
+                    <strong>Feed ID:</strong> {feed.id}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {deprecatedRealtimeFeeds.length > 0 && (
+          <section class="feed-section">
+            <h3>Deprecated GTFS Realtime Feeds</h3>
+            {deprecatedRealtimeFeeds.map(feed => (
+              <div class="feed-item deprecated-feed">
+                <div class="feed-header">
+                  <h4>{feed.name}</h4>
+                  <div class="feed-badges">
+                    <span class="feed-status status-deprecated">
+                      deprecated
+                    </span>
+                  </div>
+                </div>
+
+                {feed.note && (
+                  <p class="feed-note">{feed.note}</p>
+                )}
+
+                <div class="feed-details">
+                  <p class="feed-meta">
+                    <strong>Feed ID:</strong> {feed.id}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+      </details>
+    )}
+
     {feeds.length === 0 && (
       <p>No feeds currently available for this agency.</p>
     )}
@@ -325,8 +412,29 @@ function getAuthenticationLabel(type: number): string {
     padding: 2rem 2rem 1rem;
   }
 
-  .agency-modal header h2 {
+  .modal-header-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 0.75rem;
+  }
+
+  .modal-header-top h2 {
+    flex: 1;
+    margin: 0;
+  }
+
+  .modal-agency-logo {
+    height: 4rem;
+    width: auto;
+    margin-right: 2rem;
+    max-width: 250px;
+    object-fit: contain;
+    object-position: center center;
+  }
+
+  .agency-modal header h2 {
+    margin-bottom: 0;
   }
 
   .modal-header-links {
@@ -538,5 +646,41 @@ function getAuthenticationLabel(type: number): string {
 
   .close-modal {
     float: right;
+  }
+
+  .deprecated-section {
+    margin: 2rem 0;
+    padding: 1rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    background-color: var(--pico-code-background-color);
+  }
+
+  .deprecated-section summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.5rem;
+    user-select: none;
+    list-style-position: outside;
+    color: var(--pico-muted-color);
+  }
+
+  .deprecated-section summary:hover {
+    color: var(--pico-color);
+  }
+
+  .deprecated-section[open] summary {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+
+  .deprecated-feed {
+    opacity: 0.8;
+  }
+
+  .status-deprecated {
+    background-color: #e2e3e5;
+    color: #5a6268;
   }
 </style>

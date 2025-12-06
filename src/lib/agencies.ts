@@ -1,6 +1,6 @@
-import type { 
-  TransitAgency, 
-  MobilityDataFeed, 
+import type {
+  TransitAgency,
+  MobilityDataFeed,
   GtfsFeed,
   GtfsRTFeed,
   ProcessedFeed,
@@ -8,14 +8,38 @@ import type {
 } from './types';
 import { createClient } from './mobilitydata';
 
-export const TRANSIT_AGENCIES = [
+export interface AgencyDefinition {
+  id: string;
+  name: string;
+  slug: string;
+  website?: string;
+  logo?: string; // Path to logo in src/assets/agency-logos/ (e.g., 'WMATA_Logo_2025.svg')
+  color?: string;
+  secondaryColor?: string;
+  textColor?: string;
+  showName?: boolean; // Whether to display agency name text on card (defaults to true)
+  gtfsFeedIds?: string[];
+  gtfsRtFeedIds?: string[];
+  providers: string[];
+}
+
+// Region filtering configuration
+// To customize for your region:
+// 1. Update subdivisions to match your state/province names as they appear in Mobility Database
+// 2. Update countryCodes to your country (e.g., ['CA'] for Canada, ['US', 'CA'] for both)
+// 3. Note: Feeds are matched if EITHER location OR provider matches (see isInRegion function)
+export const REGION_CONFIG = {
+  subdivisions: ['District of Columbia', 'Virginia', 'Maryland'] as string[],
+  countryCodes: ['US'] as string[]
+};
+
+export const TRANSIT_AGENCIES: AgencyDefinition[] = [
   {
     id: 'wmata',
     name: 'WMATA',
     slug: 'wmata',
     website: 'https://www.wmata.com',
-    color: '#3a2c26',
-    textColor: '#ffffff',
+    logo: 'WMATA_Logo_2025.svg',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['Washington Metropolitan Area Transit Authority']
@@ -25,6 +49,8 @@ export const TRANSIT_AGENCIES = [
     name: 'ART',
     slug: 'art',
     website: 'https://www.arlingtontransit.com',
+    logo: 'art.svg',
+    showName: false,
     color: '#006641', 
     textColor: '#ffffff',
     gtfsFeedIds: [],
@@ -36,23 +62,23 @@ export const TRANSIT_AGENCIES = [
     name: 'CUE',
     slug: 'cue',
     website: 'https://www.fairfaxva.gov/Services/CUE-Bus',
-    gtfsFeedIds: ['mdb-2885'],
     color: '#015c8d', 
     secondaryColor: '#4fc0a9',
     textColor: '#ffffff',
+    gtfsFeedIds: [],
     gtfsRtFeedIds: [],
-    providers: []
+    providers: ['Fairfax CUE Bus (CUE)', 'Fairfax CUE Bus']
   },
   {
     id: 'dash',
     name: 'DASH',
     slug: 'dash',
     website: 'https://www.dashbus.com',
-    color: '#1c335f', 
+    color: '#0257a3',
     textColor: '#ffffff',
     gtfsFeedIds: [],
-    gtfsRtFeedIds: [],
-    providers: ['Alexandria Transit Company (DASH)']
+    gtfsRtFeedIds: ['mdb-2843', 'mdb-2844', 'mdb-2845'],
+    providers: ['Alexandria Transit Company (DASH)', 'Alexandria Transit Company']
   },
   {
     id: 'fairfax-connector',
@@ -81,12 +107,14 @@ export const TRANSIT_AGENCIES = [
     name: 'VRE',
     slug: 'vre',
     website: 'https://www.vre.org',
+    logo: 'vre.svg',
+    showName: false,
     color: '#df393e',
     secondaryColor: '#004785',
     textColor: '#ffffff',
     gtfsFeedIds: ['tld-61'],
     gtfsRtFeedIds: ['tld-1127-vp', 'tld-1127-tu'],
-    providers: []
+    providers: ['Virginia Railway Express', 'Virginia Railway Express (VRE)']
   },
   {
     id: 'omniride',
@@ -127,8 +155,10 @@ export const TRANSIT_AGENCIES = [
     name: 'MARC',
     slug: 'marc',
     website: 'https://www.mta.maryland.gov/marc',
-    color: '#F27428', 
-    secondaryColor: '#062B51',
+    logo: 'marc.svg',
+    showName: false,
+    color: '#ffffff', 
+    secondaryColor: '#F27428',
     textColor: '#ffffff',
     gtfsFeedIds: ['mdb-468'],
     gtfsRtFeedIds: ['mdb-1619'],
@@ -230,17 +260,36 @@ function processFeed(feed: MobilityDataFeed): ProcessedFeed {
 
 function determineAgencyStatus(feeds: ProcessedFeed[]): TransitAgency['overallStatus'] {
   if (feeds.length === 0) return 'unknown';
-  
-  const hasError = feeds.some(f => f.status === 'inactive' || f.status === 'deprecated');
+
+  // Only treat inactive as error (deprecated feeds are filtered out earlier)
+  const hasError = feeds.some(f => f.status === 'inactive');
   if (hasError) return 'error';
-  
+
   const hasDevelopment = feeds.some(f => f.status === 'development');
   if (hasDevelopment) return 'issues';
-  
+
   const allActive = feeds.every(f => f.status === 'active');
   if (allActive) return 'healthy';
-  
+
+  // If all feeds are deprecated (edge case where no active feeds exist)
+  const allDeprecated = feeds.every(f => f.status === 'deprecated');
+  if (allDeprecated) return 'issues';
+
   return 'issues';
+}
+
+function isInRegion(feed: MobilityDataFeed): boolean {
+  // Check if location matches configured subdivisions
+  const hasMatchingLocation = feed.locations && feed.locations.length > 0 &&
+    feed.locations.some(loc => REGION_CONFIG.subdivisions.includes(loc.subdivision_name || ''));
+
+  // Check if provider matches any configured agency
+  const hasMatchingProvider = TRANSIT_AGENCIES.some(agency =>
+    agency.providers.length > 0 && agency.providers.some(p => feed.provider.includes(p))
+  );
+
+  // A feed is in region if EITHER location OR provider matches
+  return hasMatchingLocation || hasMatchingProvider;
 }
 
 export async function getDCFeeds(): Promise<TransitAgency[]> {
@@ -274,85 +323,66 @@ export async function getDCFeeds(): Promise<TransitAgency[]> {
     }
   }
 
-  // Then fetch GTFS and GTFS-RT feeds for DC region
+  // Then fetch GTFS and GTFS-RT feeds for configured region(s)
   const allFeeds: MobilityDataFeed[] = [...feedsById.values()];
 
-  // Fetch GTFS feeds
-  try {
-    let offset = 0;
-    const limit = 100;
-    let hasMore = true;
+  // Fetch GTFS feeds for each country code
+  for (const countryCode of REGION_CONFIG.countryCodes) {
+    try {
+      let offset = 0;
+      const limit = 100;
+      let hasMore = true;
 
-    while (hasMore) {
-      const gtfsFeeds = await client.getGtfsFeeds({
-        limit,
-        offset,
-        country_code: 'US',
-      });
+      while (hasMore) {
+        const gtfsFeeds = await client.getGtfsFeeds({
+          limit,
+          offset,
+          country_code: countryCode,
+        });
 
-      // Filter to DC region
-      const dcGtfsFeeds = gtfsFeeds.filter(feed => {
-        // Skip if already fetched by ID
-        if (feedsById.has(feed.id)) return false;
+        // Filter to configured region
+        const regionalFeeds = gtfsFeeds.filter(feed => {
+          // Skip if already fetched by ID
+          if (feedsById.has(feed.id)) return false;
+          return isInRegion(feed);
+        });
 
-        if (!feed.locations || feed.locations.length === 0) {
-          return TRANSIT_AGENCIES.some(agency =>
-            agency.providers.some(p => feed.provider.includes(p))
-          );
-        }
-
-        return feed.locations.some(loc =>
-          loc.subdivision_name === 'District of Columbia' ||
-          loc.subdivision_name === 'Virginia' ||
-          loc.subdivision_name === 'Maryland'
-        );
-      });
-
-      allFeeds.push(...dcGtfsFeeds);
-      offset += limit;
-      hasMore = gtfsFeeds.length === limit;
+        allFeeds.push(...regionalFeeds);
+        offset += limit;
+        hasMore = gtfsFeeds.length === limit;
+      }
+    } catch (error) {
+      console.error(`Failed to fetch GTFS feeds for ${countryCode}:`, error);
     }
-  } catch (error) {
-    console.error('Failed to fetch GTFS feeds:', error);
   }
 
-  // Fetch GTFS-RT feeds
-  try {
-    let offset = 0;
-    const limit = 100;
-    let hasMore = true;
+  // Fetch GTFS-RT feeds for each country code
+  for (const countryCode of REGION_CONFIG.countryCodes) {
+    try {
+      let offset = 0;
+      const limit = 100;
+      let hasMore = true;
 
-    while (hasMore) {
-      const gtfsRtFeeds = await client.getGtfsRtFeeds({
-        limit,
-        offset,
-        country_code: 'US',
-      });
+      while (hasMore) {
+        const gtfsRtFeeds = await client.getGtfsRtFeeds({
+          limit,
+          offset,
+          country_code: countryCode,
+        });
 
-      // Filter to DC region
-      const dcGtfsRtFeeds = gtfsRtFeeds.filter(feed => {
-        // Skip if already fetched by ID
-        if (feedsById.has(feed.id)) return false;
-
-        if (!feed.locations || feed.locations.length === 0) {
-          return TRANSIT_AGENCIES.some(agency =>
-            agency.providers.some(p => feed.provider.includes(p))
-          );
-        }
-
-        return feed.locations.some(loc =>
-          loc.subdivision_name === 'District of Columbia' ||
-          loc.subdivision_name === 'Virginia' ||
-          loc.subdivision_name === 'Maryland'
-        );
-      });
-
-      allFeeds.push(...dcGtfsRtFeeds);
-      offset += limit;
-      hasMore = gtfsRtFeeds.length === limit;
+        // Filter to configured region
+        const regionalFeeds = gtfsRtFeeds.filter(feed => {
+          // Skip if already fetched by ID
+          if (feedsById.has(feed.id)) return false;
+          return isInRegion(feed);
+        });
+        allFeeds.push(...regionalFeeds);
+        offset += limit;
+        hasMore = gtfsRtFeeds.length === limit;
+      }
+    } catch (error) {
+      console.error(`Failed to fetch GTFS-RT feeds for ${countryCode}:`, error);
     }
-  } catch (error) {
-    console.error('Failed to fetch GTFS-RT feeds:', error);
   }
 
   // Process all feeds
@@ -378,32 +408,38 @@ export async function getDCFeeds(): Promise<TransitAgency[]> {
 
   // Build agencies with matched feeds
   const agencies: TransitAgency[] = TRANSIT_AGENCIES.map(agencyDef => {
-    const agencyFeeds = allFeeds
+    const matchedFeeds = allFeeds
       .filter(feed => {
         // Match by ID first (most reliable)
-        const allFeedIds = [
+        const allFeedIds: string[] = [
           ...(agencyDef.gtfsFeedIds || []),
           ...(agencyDef.gtfsRtFeedIds || [])
         ];
-        if (allFeedIds.includes(feed.id)) {
+        if (allFeedIds.length > 0 && allFeedIds.includes(feed.id)) {
           return true;
         }
         // Fall back to provider name matching
-        return agencyDef.providers.some(p => feed.provider.includes(p));
+        return agencyDef.providers.length > 0 && agencyDef.providers.some(p => feed.provider.includes(p));
       })
       .map(feed => processedFeedsMap.get(feed.id)!);
+
+    // Filter out deprecated feeds for status calculation and card display
+    const nonDeprecatedFeeds = matchedFeeds.filter(f => f.status !== 'deprecated');
+    const activeFeeds = nonDeprecatedFeeds.length > 0 ? nonDeprecatedFeeds : matchedFeeds;
 
     return {
       id: agencyDef.id,
       name: agencyDef.name,
       slug: agencyDef.slug,
       website: agencyDef.website,
+      logo: agencyDef.logo,
       color: agencyDef.color,
       secondaryColor: agencyDef.secondaryColor,
       textColor: agencyDef.textColor,
+      showName: agencyDef.showName,
       feedIds: [...(agencyDef.gtfsFeedIds || []), ...(agencyDef.gtfsRtFeedIds || [])],
-      feeds: agencyFeeds,
-      overallStatus: determineAgencyStatus(agencyFeeds)
+      feeds: matchedFeeds, // Include ALL feeds (including deprecated) for the modal
+      overallStatus: determineAgencyStatus(activeFeeds) // But calculate status from active feeds only
     };
   }).filter(agency => agency.feeds.length > 0);
 

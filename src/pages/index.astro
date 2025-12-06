@@ -34,18 +34,24 @@ try {
   ) : agencies && agencies.length > 0 ? (
     <>
       <div class="agency-grid">
-        {agencies.map(agency => (
-          <AgencyCard
-            agencyId={agency.id}
-            name={agency.name}
-            feedCount={agency.feeds.length}
-            status={agency.overallStatus}
-            website={agency.website}
-            color={agency.color}
-            secondaryColor={agency.secondaryColor}
-            textColor={agency.textColor}
-          />
-        ))}
+        {agencies.map(agency => {
+          const activeFeedCount = agency.feeds.filter(f => f.status !== 'deprecated').length;
+          const displayCount = activeFeedCount > 0 ? activeFeedCount : agency.feeds.length;
+          return (
+            <AgencyCard
+              agencyId={agency.id}
+              name={agency.name}
+              feedCount={displayCount}
+              status={agency.overallStatus}
+              website={agency.website}
+              logo={agency.logo}
+              color={agency.color}
+              secondaryColor={agency.secondaryColor}
+              textColor={agency.textColor}
+              showName={agency.showName}
+            />
+          );
+        })}
       </div>
 
       {agencies.map(agency => (
@@ -53,6 +59,7 @@ try {
           agencyId={agency.id}
           agencyName={agency.name}
           website={agency.website}
+          logo={agency.logo}
           feeds={agency.feeds}
         />
       ))}

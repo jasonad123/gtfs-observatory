@@ -35,13 +35,13 @@ try {
     <>
       <div class="agency-grid">
         {agencies.map(agency => {
-          const activeFeedCount = agency.feeds.filter(f => f.status !== 'deprecated').length;
+          const activeFeedCount = agency.feeds.filter(f => f.status !== 'deprecated' && f.status !== 'inactive').length;
           const displayCount = activeFeedCount > 0 ? activeFeedCount : agency.feeds.length;
           return (
             <AgencyCard
               agencyId={agency.id}
               name={agency.name}
-              feedCount={displayCount}
+              activeFeedCount={displayCount}
               status={agency.overallStatus}
               website={agency.website}
               logo={agency.logo}

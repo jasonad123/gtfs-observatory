@@ -262,9 +262,9 @@ function processFeed(feed: MobilityDataFeed): ProcessedFeed {
 function determineAgencyStatus(feeds: ProcessedFeed[]): TransitAgency['overallStatus'] {
   if (feeds.length === 0) return 'unknown';
 
-  // Only treat inactive as error (deprecated feeds are filtered out earlier)
-  const hasError = feeds.some(f => f.status === 'inactive');
-  if (hasError) return 'error';
+  // Check for inactive feeds - only treat as error if ALL feeds are inactive
+  const allInactive = feeds.every(f => f.status === 'inactive');
+  if (allInactive) return 'error';
 
   const hasDevelopment = feeds.some(f => f.status === 'development');
   if (hasDevelopment) return 'issues';
@@ -424,9 +424,10 @@ export async function getDCFeeds(): Promise<TransitAgency[]> {
       })
       .map(feed => processedFeedsMap.get(feed.id)!);
 
-    // Filter out deprecated feeds for status calculation and card display
-    const nonDeprecatedFeeds = matchedFeeds.filter(f => f.status !== 'deprecated');
-    const activeFeeds = nonDeprecatedFeeds.length > 0 ? nonDeprecatedFeeds : matchedFeeds;
+    // Filter out deprecated and inactive feeds for status calculation and card display
+    const activeFeeds = matchedFeeds.filter(f => f.status !== 'deprecated' && f.status !== 'inactive');
+    // If no active feeds remain, fall back to all feeds (so we show something)
+    const feedsForStatusCalc = activeFeeds.length > 0 ? activeFeeds : matchedFeeds;
 
     return {
       id: agencyDef.id,
@@ -439,8 +440,8 @@ export async function getDCFeeds(): Promise<TransitAgency[]> {
       textColor: agencyDef.textColor,
       showName: agencyDef.showName,
       feedIds: [...(agencyDef.gtfsFeedIds || []), ...(agencyDef.gtfsRtFeedIds || [])],
-      feeds: matchedFeeds, // Include ALL feeds (including deprecated) for the modal
-      overallStatus: determineAgencyStatus(activeFeeds) // But calculate status from active feeds only
+      feeds: matchedFeeds, // Include ALL feeds (including deprecated and inactive) for the modal
+      overallStatus: determineAgencyStatus(feedsForStatusCalc) // But calculate status from active feeds only
     };
   }).filter(agency => agency.feeds.length > 0);
 

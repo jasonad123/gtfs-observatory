@@ -21,10 +21,12 @@ if (logo) {
   logoImage = logoModule?.default;
 }
 
-const staticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status !== 'deprecated');
-const realtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status !== 'deprecated');
+const staticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status !== 'deprecated' && f.status !== 'inactive');
+const realtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status !== 'deprecated' && f.status !== 'inactive');
 const deprecatedStaticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status === 'deprecated');
 const deprecatedRealtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status === 'deprecated');
+const inactiveStaticFeeds = feeds.filter(f => f.type === 'gtfs' && f.status === 'inactive');
+const inactiveRealtimeFeeds = feeds.filter(f => f.type === 'gtfs_rt' && f.status === 'inactive');
 
 function formatDate(dateString?: string): string {
   if (!dateString) return 'Unknown';
@@ -81,7 +83,7 @@ function getAuthenticationLabel(type: number): string {
             Visit agency website
           </a>
         )}
-        <a href={`https://mobilitydatabase.org/?feeds=${encodeURIComponent(agencyName)}`} target="_blank" rel="noopener" class="search-link">
+        <a href={`https://mobilitydatabase.org/feeds?q=${encodeURIComponent(agencyName)}`} target="_blank" rel="noopener" class="search-link">
           Search on Mobility Database
         </a>
       </div>
@@ -407,6 +409,270 @@ function getAuthenticationLabel(type: number): string {
       </details>
     )}
 
+    {(inactiveStaticFeeds.length > 0 || inactiveRealtimeFeeds.length > 0) && (
+      <details class="inactive-section">
+        <summary>Inactive Feeds ({inactiveStaticFeeds.length + inactiveRealtimeFeeds.length})</summary>
+
+        {inactiveStaticFeeds.length > 0 && (
+          <section class="feed-section">
+            <h3>Inactive GTFS Schedule Feeds</h3>
+            {inactiveStaticFeeds.map(feed => (
+              <div class="feed-item inactive-feed">
+                <div class="feed-header">
+                  <h4>{feed.name}</h4>
+                  <div class="feed-badges">
+                    <span class="feed-status status-inactive">
+                      inactive
+                    </span>
+                    {feed.official && (
+                      <span class="official-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="official-badge-icon" aria-hidden="true">
+                          <path fill="currentColor" fill-rule="evenodd" d="m283.735 52.918l31.295 26.614a42.7 42.7 0 0 0 24.213 10.03l40.947 3.309c20.86 1.686 37.42 18.246 39.106 39.106l3.31 40.947a42.7 42.7 0 0 0 10.029 24.213l26.614 31.294c13.557 15.942 13.557 39.362 0 55.304l-26.614 31.295a42.7 42.7 0 0 0-10.03 24.213l-3.31 40.947c-1.685 20.86-18.246 37.42-39.105 39.106l-40.947 3.31a42.7 42.7 0 0 0-24.213 10.029l-31.295 26.614c-15.942 13.557-39.362 13.557-55.304 0l-31.294-26.614a42.7 42.7 0 0 0-24.213-10.03l-40.947-3.31c-20.86-1.685-37.42-18.246-39.106-39.105l-3.31-40.947a42.7 42.7 0 0 0-10.03-24.213l-26.613-31.295c-13.557-15.942-13.557-39.362 0-55.304l26.614-31.294a42.7 42.7 0 0 0 10.03-24.213l3.309-40.947c1.686-20.86 18.246-37.42 39.106-39.106l40.947-3.31a42.7 42.7 0 0 0 24.213-10.03l31.294-26.613c15.942-13.557 39.362-13.557 55.304 0m-27.64 32.503l-31.317 26.613a85.35 85.35 0 0 1-48.417 20.055l-40.947 3.31l-3.325 40.962a85.35 85.35 0 0 1-20.055 48.417l-26.613 31.295l26.613 31.316a85.35 85.35 0 0 1 20.055 48.416l3.31 40.947l40.962 3.326a85.35 85.35 0 0 1 48.417 20.054l31.295 26.614l31.316-26.614a85.35 85.35 0 0 1 48.416-20.054l40.947-3.31l3.326-40.963a85.35 85.35 0 0 1 20.054-48.416l26.614-31.295l-26.614-31.316a85.35 85.35 0 0 1-20.054-48.417l-3.31-40.947l-40.963-3.325a85.35 85.35 0 0 1-48.416-20.055zm80.24 94.36l30.167 30.167l-131.836 132.388l-79.083-79.084l30.167-30.166l48.916 48.916z" />
+                        </svg>
+                        Official
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {feed.note && (
+                  <p class="feed-note">{feed.note}</p>
+                )}
+
+                <div class="feed-details">
+                  <p class="feed-meta">
+                    <strong>Last updated:</strong> {formatDate(feed.lastUpdated)}
+                  </p>
+
+                  {feed.locations && feed.locations.length > 0 && (
+                    <p class="feed-meta">
+                      <strong>Service area:</strong> {feed.locations.map(loc =>
+                        [loc.municipality, loc.subdivision_name, loc.country].filter(Boolean).join(', ')
+                      ).join(' • ')}
+                    </p>
+                  )}
+
+                  {feed.validation && (
+                    <div class="validation-summary">
+                      <strong>Validation:</strong>
+                      <div class="validation-pills">
+                        <span class={`validation-pill ${feed.validation.unique_error_count > 0 ? 'validation-pill-error' : 'validation-pill-success'}`}>
+                          {feed.validation.unique_error_count > 0 ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="validation-icon" aria-hidden="true">
+                              <path fill="currentColor" d="M22 8v8l-6 6H8l-6-6V8l6-6h8zM4 8.8v6.4L8.8 20h6.4l4.8-4.8V8.8L15.2 4H8.8zm8 5.95c.714 0 1.25.528 1.25 1.248s-.536 1.248-1.25 1.248c-.73 0-1.25-.528-1.25-1.264c0-.704.536-1.232 1.25-1.232M13 7v6h-2V7z" />
+                            </svg>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="validation-icon" aria-hidden="true">
+                              <path fill="currentColor" fill-rule="evenodd" d="M256 42.667C138.18 42.667 42.667 138.18 42.667 256S138.18 469.334 256 469.334S469.334 373.82 469.334 256S373.821 42.667 256 42.667m0 384c-94.105 0-170.666-76.561-170.666-170.667S161.894 85.334 256 85.334S426.667 161.894 426.667 256S350.106 426.667 256 426.667m80.336-246.886l30.167 30.167l-131.836 132.388l-79.083-79.083l30.166-30.167l48.917 48.917z" />
+                            </svg>
+                          )}
+                          {feed.validation.unique_error_count} errors
+                        </span>
+                        <span class="validation-pill validation-pill-warning">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="validation-icon" aria-hidden="true">
+                            <path fill="currentColor" fill-rule="evenodd" d="M256 42.667c117.61 0 213.334 95.723 213.334 213.333S373.61 469.334 256 469.334S42.667 373.61 42.667 256S138.39 42.667 256 42.667m0 42.667c-94.458 0-170.666 76.208-170.666 170.666c0 94.46 76.208 170.667 170.666 170.667c94.46 0 170.667-76.208 170.667-170.667c0-94.458-76.208-170.666-170.667-170.666m0 229.376c15.238 0 26.667 11.264 26.667 26.624S271.238 367.958 256 367.958c-15.584 0-26.666-11.264-26.666-26.966c0-15.018 11.428-26.282 26.666-26.282M277.334 128v149.334h-42.667V128z" />
+                          </svg>
+                          {feed.validation.unique_warning_count} warnings
+                        </span>
+                        <span class="validation-pill validation-pill-info">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="validation-icon" aria-hidden="true">
+                            <path fill="currentColor" fill-rule="evenodd" d="M256 42.667C138.18 42.667 42.667 138.179 42.667 256c0 117.82 95.513 213.334 213.333 213.334c117.822 0 213.334-95.513 213.334-213.334S373.822 42.667 256 42.667m0 384c-94.105 0-170.666-76.561-170.666-170.667S161.894 85.334 256 85.334c94.107 0 170.667 76.56 170.667 170.666S350.107 426.667 256 426.667m26.714-256c0 15.468-11.262 26.667-26.497 26.667c-15.851 0-26.837-11.2-26.837-26.963c0-15.15 11.283-26.37 26.837-26.37c15.235 0 26.497 11.22 26.497 26.666m-48 64h42.666v128h-42.666z" />
+                          </svg>
+                          {feed.validation.unique_info_count} info notices
+                        </span>
+                      </div>
+                      {feed.validation.url_html && (
+                        <a href={feed.validation.url_html} target="_blank" rel="noopener" class="validation-link">
+                          View report
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {feed.authentication && feed.authentication.type > 0 && (
+                    <p class="feed-meta auth-info">
+                      <strong>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="auth-icon" aria-hidden="true">
+                          <path fill="currentColor" fill-rule="evenodd" d="M213.333 42.665c41.238 0 74.667 33.43 74.667 74.667c0 39.862-31.238 72.429-70.57 74.556l-4.097.11c-41.237 0-74.666-33.429-74.666-74.666c0-39.863 31.238-72.43 70.57-74.556zm149.334 320.001h-.006V320l.144-2.488c1.232-10.61 10.249-18.846 21.19-18.846l2.488.144c10.61 1.232 18.845 10.249 18.845 21.19v42.666zm-64.006 21.332v-21.332h21.334v-42.667c0-16.788 6.464-32.067 17.039-43.483C348.724 263.898 365.437 256 383.995 256c35.346 0 64 28.653 64 64v42.666h21.333v106.667H298.661zm-47.994-149.333c27.181 0 52.1 9.959 71.497 26.523c-10.165 10.684-17.589 23.998-21.147 38.817c-11.838-13.062-28.253-21.497-46.442-22.559l-3.908-.114H176c-36.708 0-67.166 30.026-69.223 68.392l-.11 4.141v34.133h170.661v42.667H64v-76.8c0-62.033 47.668-112.614 107.383-115.104l4.617-.096zm-69.334-117.333c0-17.673 14.327-32 32-32s32 14.327 32 32s-14.327 32-32 32s-32-14.327-32-32" clip-rule="evenodd" />
+                        </svg>
+                        Authentication:
+                      </strong> {getAuthenticationLabel(feed.authentication.type)}
+                      {feed.authentication.infoUrl && (
+                        <>
+                          {' '}
+                          <a href={feed.authentication.infoUrl} target="_blank" rel="noopener">
+                            Details
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  )}
+
+                  {feed.license && (
+                    <p class="feed-meta">
+                      <strong>License:</strong>
+                      {feed.license.url ? (
+                        <a href={feed.license.url} target="_blank" rel="noopener">
+                          {feed.license.id || 'View License'}
+                        </a>
+                      ) : feed.license.id || 'See provider'}
+                      {feed.license.isSpdx && ' (SPDX)'}
+                    </p>
+                  )}
+                </div>
+
+                <div class="download-options">
+                  {feed.downloadUrls.mobilityData && (
+                    <a
+                      href={feed.downloadUrls.mobilityData}
+                      class="download-btn"
+                      download
+                      role="button"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+                        <path fill="currentColor" fill-rule="evenodd" d="m149.57 185.444l-32.378 8.4c-18.354 4.762-31.859 21.49-31.859 41.264c0 23.541 19.084 42.625 42.625 42.625h143.029l77.841.001c42.989 0 77.839-34.85 77.839-77.84s-34.85-77.84-77.839-77.84c-10.847 0-21.072 2.194-30.34 6.122l-31.574 13.383l-19.86-27.956c-11.838-16.665-31.162-27.396-52.991-27.396c-35.859 0-64.928 29.069-64.928 64.928l.006.862zm85.097 211.038l-42.666-42.655l-30.17 30.17l94.157 94.157l94.179-94.153l-30.166-30.174l-42.668 42.656V320.4h71.495c66.553 0 120.506-53.952 120.506-120.506S415.381 79.387 348.828 79.387c-16.671 0-32.551 3.385-46.991 9.506c-19.497-27.446-51.544-45.352-87.774-45.352c-59.423 0-107.594 48.171-107.594 107.594q0 .705.009 1.409c-36.707 9.523-63.811 42.879-63.811 82.564c0 47.106 38.186 85.292 85.291 85.292h106.709z" clip-rule="evenodd" />
+                      </svg>
+                      Download (Mobility Database)
+                    </a>
+                  )}
+                  {feed.downloadUrls.direct && (
+                    <a
+                      href={feed.downloadUrls.direct}
+                      class="download-btn secondary"
+                      target="_blank"
+                      rel="noopener"
+                      role="button"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+                        <path fill="currentColor" d="M426.666 426.667H85.333V384h341.333zm-149.333-179.5l91.583-91.583l30.167 30.166L256 328.834L112.916 185.75l30.167-30.166l91.583 91.582v-204.5h42.667z" />
+                      </svg>
+                      {feed.authentication?.type ? 'Access direct (auth required)' : 'Download (direct)'}
+                    </a>
+                  )}
+                  {feed.id && (
+                    <a
+                      href={`https://mobilitydatabase.org/feeds/${feed.id}`}
+                      class="feed-link-btn"
+                      target="_blank"
+                      rel="noopener"
+                      role="button"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+	                      <path fill="currentColor" d="m127.977 312.432l-.005 48.7l.03 1.596c1.172 16.27 55.661 42.605 127.998 42.605c39.56 0 76.057-7.718 101.598-20.489c17.584-8.792 25.343-17.165 26.3-21.347l.102-.83v-50.223c-31.272 17.716-77.026 28.89-128 28.89c-50.986 0-96.75-11.18-128.023-28.902m259.234-108.527l-1.627.962c-31.3 18.243-77.743 29.8-129.584 29.8c-51.821 0-98.248-11.548-129.548-29.778q.764.444 1.54.884L127.985 256H128c0 3.819 7.561 12.758 26.401 22.178c25.542 12.77 62.038 20.489 101.599 20.489c39.56 0 76.057-7.719 101.598-20.49C376.438 268.758 384 259.82 384 256v-50.223q1.633-.924 3.21-1.872M256 106.667c-39.56 0-76.057 7.718-101.599 20.489c-18.84 9.42-26.401 18.358-26.401 22.177c0 3.82 7.561 12.758 26.401 22.178C179.943 184.28 216.44 192 256 192s76.057-7.718 101.598-20.49c18.84-9.42 26.402-18.358 26.402-22.177s-7.562-12.757-26.402-22.177c-25.541-12.771-62.038-20.49-101.598-20.49m170.666 256C426.666 409.795 350.256 448 256 448c-92.162 0-167.262-36.526-170.554-82.205l-.113-3.128V149.333q0 .678.021 1.352l-.021-1.352C85.333 102.205 161.743 64 256 64c94.256 0 170.666 38.205 170.666 85.333z" />
+                      </svg>
+                      View on Mobility Database
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {inactiveRealtimeFeeds.length > 0 && (
+          <section class="feed-section">
+            <h3>Inactive GTFS Realtime Feeds</h3>
+            {inactiveRealtimeFeeds.map(feed => (
+              <div class="feed-item inactive-feed">
+                <div class="feed-header">
+                  <h4>{feed.name}</h4>
+                  <div class="feed-badges">
+                    <span class="feed-status status-inactive">
+                      inactive
+                    </span>
+                    {feed.official && (
+                      <span class="official-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="official-badge-icon" aria-hidden="true">
+                          <path fill="currentColor" fill-rule="evenodd" d="m283.735 52.918l31.295 26.614a42.7 42.7 0 0 0 24.213 10.03l40.947 3.309c20.86 1.686 37.42 18.246 39.106 39.106l3.31 40.947a42.7 42.7 0 0 0 10.029 24.213l26.614 31.294c13.557 15.942 13.557 39.362 0 55.304l-26.614 31.295a42.7 42.7 0 0 0-10.03 24.213l-3.31 40.947c-1.685 20.86-18.246 37.42-39.105 39.106l-40.947 3.31a42.7 42.7 0 0 0-24.213 10.029l-31.295 26.614c-15.942 13.557-39.362 13.557-55.304 0l-31.294-26.614a42.7 42.7 0 0 0-24.213-10.03l-40.947-3.31c-20.86-1.685-37.42-18.246-39.106-39.105l-3.31-40.947a42.7 42.7 0 0 0-10.03-24.213l-26.613-31.295c-13.557-15.942-13.557-39.362 0-55.304l26.614-31.294a42.7 42.7 0 0 0 10.03-24.213l3.309-40.947c1.686-20.86 18.246-37.42 39.106-39.106l40.947-3.31a42.7 42.7 0 0 0 24.213-10.03l31.294-26.613c15.942-13.557 39.362-13.557 55.304 0m-27.64 32.503l-31.317 26.613a85.35 85.35 0 0 1-48.417 20.055l-40.947 3.31l-3.325 40.962a85.35 85.35 0 0 1-20.055 48.417l-26.613 31.295l26.613 31.316a85.35 85.35 0 0 1 20.055 48.416l3.31 40.947l40.962 3.326a85.35 85.35 0 0 1 48.417 20.054l31.295 26.614l31.316-26.614a85.35 85.35 0 0 1 48.416-20.054l40.947-3.31l3.326-40.963a85.35 85.35 0 0 1 20.054-48.416l26.614-31.295l-26.614-31.316a85.35 85.35 0 0 1-20.054-48.417l-3.31-40.947l-40.963-3.325a85.35 85.35 0 0 1-48.416-20.055zm80.24 94.36l30.167 30.167l-131.836 132.388l-79.083-79.084l30.167-30.166l48.916 48.916z" />
+                        </svg>
+                        Official
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {feed.note && (
+                  <p class="feed-note">{feed.note}</p>
+                )}
+
+                <div class="feed-details">
+                  {feed.realtimeTypes && feed.realtimeTypes.length > 0 && (
+                    <p class="feed-meta">
+                      <strong>Types:</strong> {feed.realtimeTypes.map(getRealtimeTypeLabel).join(', ')}
+                    </p>
+                  )}
+
+                  {feed.locations && feed.locations.length > 0 && (
+                    <p class="feed-meta">
+                      <strong>Service area:</strong> {feed.locations.map(loc =>
+                        [loc.municipality, loc.subdivision_name].filter(Boolean).join(', ')
+                      ).join(' • ')}
+                    </p>
+                  )}
+
+                  {feed.feedReferences && feed.feedReferences.length > 0 && (
+                    <p class="feed-meta">
+                      <strong>Associated GTFS feeds:</strong> {feed.feedReferences.join(', ')}
+                    </p>
+                  )}
+
+                  {feed.authentication && feed.authentication.type > 0 && (
+                    <p class="feed-meta auth-info">
+                      <strong>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="auth-icon" aria-hidden="true">
+                          <path fill="currentColor" fill-rule="evenodd" d="M213.333 42.665c41.238 0 74.667 33.43 74.667 74.667c0 39.862-31.238 72.429-70.57 74.556l-4.097.11c-41.237 0-74.666-33.429-74.666-74.666c0-39.863 31.238-72.43 70.57-74.556zm149.334 320.001h-.006V320l.144-2.488c1.232-10.61 10.249-18.846 21.19-18.846l2.488.144c10.61 1.232 18.845 10.249 18.845 21.19v42.666zm-64.006 21.332v-21.332h21.334v-42.667c0-16.788 6.464-32.067 17.039-43.483C348.724 263.898 365.437 256 383.995 256c35.346 0 64 28.653 64 64v42.666h21.333v106.667H298.661zm-47.994-149.333c27.181 0 52.1 9.959 71.497 26.523c-10.165 10.684-17.589 23.998-21.147 38.817c-11.838-13.062-28.253-21.497-46.442-22.559l-3.908-.114H176c-36.708 0-67.166 30.026-69.223 68.392l-.11 4.141v34.133h170.661v42.667H64v-76.8c0-62.033 47.668-112.614 107.383-115.104l4.617-.096zm-69.334-117.333c0-17.673 14.327-32 32-32s32 14.327 32 32s-14.327 32-32 32s-32-14.327-32-32" clip-rule="evenodd" />
+                        </svg>
+                        Authentication:
+                      </strong> {getAuthenticationLabel(feed.authentication.type)}
+                      {feed.authentication.infoUrl && (
+                        <>
+                          {' '}
+                          <a href={feed.authentication.infoUrl} target="_blank" rel="noopener">
+                            Details
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  )}
+                </div>
+
+                <div class="download-options">
+                  {feed.downloadUrls.direct && (
+                    <a
+                      href={feed.downloadUrls.direct}
+                      class="download-btn"
+                      target="_blank"
+                      rel="noopener"
+                      role="button"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+                        <path fill="currentColor" d="M426.666 426.667H85.333V384h341.333zm-149.333-179.5l91.583-91.583l30.167 30.166L256 328.834L112.916 185.75l30.167-30.166l91.583 91.582v-204.5h42.667z" />
+                      </svg>
+                      {feed.authentication?.type ? 'Access Feed URL (Auth Required)' : 'Access Feed URL'}
+                    </a>
+                  )}
+                  {feed.id && (
+                    <a
+                      href={`https://mobilitydatabase.org/feeds/gtfs_rt/${feed.id}`}
+                      class="feed-link-btn"
+                      target="_blank"
+                      rel="noopener"
+                      role="button"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+	                      <path fill="currentColor" d="m127.977 312.432l-.005 48.7l.03 1.596c1.172 16.27 55.661 42.605 127.998 42.605c39.56 0 76.057-7.718 101.598-20.489c17.584-8.792 25.343-17.165 26.3-21.347l.102-.83v-50.223c-31.272 17.716-77.026 28.89-128 28.89c-50.986 0-96.75-11.18-128.023-28.902m259.234-108.527l-1.627.962c-31.3 18.243-77.743 29.8-129.584 29.8c-51.821 0-98.248-11.548-129.548-29.778q.764.444 1.54.884L127.985 256H128c0 3.819 7.561 12.758 26.401 22.178c25.542 12.77 62.038 20.489 101.599 20.489c39.56 0 76.057-7.719 101.598-20.49C376.438 268.758 384 259.82 384 256v-50.223q1.633-.924 3.21-1.872M256 106.667c-39.56 0-76.057 7.718-101.599 20.489c-18.84 9.42-26.401 18.358-26.401 22.177c0 3.82 7.561 12.758 26.401 22.178C179.943 184.28 216.44 192 256 192s76.057-7.718 101.598-20.49c18.84-9.42 26.402-18.358 26.402-22.177s-7.562-12.757-26.402-22.177c-25.541-12.771-62.038-20.49-101.598-20.49m170.666 256C426.666 409.795 350.256 448 256 448c-92.162 0-167.262-36.526-170.554-82.205l-.113-3.128V149.333q0 .678.021 1.352l-.021-1.352C85.333 102.205 161.743 64 256 64c94.256 0 170.666 38.205 170.666 85.333z" />
+                      </svg>
+                      View on Mobility Database
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+      </details>
+    )}
+
     {feeds.length === 0 && (
       <p>No feeds currently available for this agency.</p>
     )}
@@ -667,7 +933,8 @@ function getAuthenticationLabel(type: number): string {
     float: right;
   }
 
-  .deprecated-section {
+  .deprecated-section,
+  .inactive-section {
     margin: 2rem 0;
     padding: 1rem;
     border: 1px solid var(--pico-muted-border-color);
@@ -675,7 +942,8 @@ function getAuthenticationLabel(type: number): string {
     background-color: var(--pico-code-background-color);
   }
 
-  .deprecated-section summary {
+  .deprecated-section summary,
+  .inactive-section summary {
     cursor: pointer;
     font-weight: 600;
     padding: 0.5rem;
@@ -684,17 +952,20 @@ function getAuthenticationLabel(type: number): string {
     color: var(--pico-muted-color);
   }
 
-  .deprecated-section summary:hover {
+  .deprecated-section summary:hover,
+  .inactive-section summary:hover {
     color: var(--pico-color);
   }
 
-  .deprecated-section[open] summary {
+  .deprecated-section[open] summary,
+  .inactive-section[open] summary {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--pico-muted-border-color);
   }
 
-  .deprecated-feed {
+  .deprecated-feed,
+  .inactive-feed {
     opacity: 0.8;
   }
 

@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 interface Props {
   agencyId: string;
   name: string;
-  feedCount: number;
+  activeFeedCount: number; // Count excluding deprecated and inactive feeds
   status: 'healthy' | 'issues' | 'error' | 'unknown';
   website?: string;
   logo?: string;
@@ -14,7 +14,7 @@ interface Props {
   showName?: boolean; // Whether to display agency name text (defaults to true)
 }
 
-const { agencyId, name, feedCount, status, website, logo, color, secondaryColor, textColor, showName = true } = Astro.props;
+const { agencyId, name, activeFeedCount, status, website, logo, color, secondaryColor, textColor, showName = true } = Astro.props;
 
 const statusLabels = {
   healthy: 'Operational',
@@ -54,7 +54,7 @@ if (logo) {
   </header>
   <div class="agency-info">
     <p>
-      <strong>{feedCount}</strong> {feedCount === 1 ? 'feed' : 'feeds'} available
+      <strong>{activeFeedCount}</strong> {activeFeedCount === 1 ? 'feed' : 'feeds'} available
     </p>
   </div>
   <footer>

@@ -115,7 +115,7 @@ export const TRANSIT_AGENCIES: AgencyDefinition[] = [
     textColor: '#ffffff',
     gtfsFeedIds: ['tld-61'],
     gtfsRtFeedIds: ['tld-1127-vp', 'tld-1127-tu'],
-    providers: ['Virginia Railway Express', 'Virginia Railway Express (VRE)']
+    providers: ['Virginia Railway Express']
   },
   {
     id: 'omniride',

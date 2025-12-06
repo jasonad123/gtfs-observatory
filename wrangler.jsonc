@@ -1,6 +1,6 @@
 {
 	"main": "dist/_worker.js/index.js",
-	"name": "gtfs-observatory",
+	"name": "dmv-gtfs-dev",
   "compatibility_date": "2025-12-06",
   "compatibility_flags": [
     "nodejs_compat",

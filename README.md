@@ -24,9 +24,9 @@ Built with Astro and powered by the MobilityData Mobility Database API.
 If you received this as a directory, navigate to it. Otherwise, extract the files.
 
 ```bash
-https://github.com/jasonad123/dmv-gtfs-dev.git
+https://github.com/jasonad123/gtfs-observatory.git
 
-cd dmv-gtfs-dev
+cd gtfs-observatory
 ```
 
 ### 2. Install Dependencies

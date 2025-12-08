@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://dmv-gtfs-dev.pages.dev',
+  site: 'https://gtfs-observatory.pages.dev',
   output: 'static',
 
   build: {

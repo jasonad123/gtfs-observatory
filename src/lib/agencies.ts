@@ -29,11 +29,53 @@ export interface AgencyDefinition {
 // 2. Update countryCodes to your country (e.g., ['CA'] for Canada, ['US', 'CA'] for both)
 // 3. Note: Feeds are matched if EITHER location OR provider matches (see isInRegion function)
 export const REGION_CONFIG = {
-  subdivisions: ['District of Columbia', 'Virginia', 'Maryland', 'British Columbia'] as string[],
+  subdivisions: ['District of Columbia', 'Virginia', 'Maryland', 'British Columbia', 'Washington'] as string[],
   countryCodes: ['US', 'CA'] as string[]
 };
 
 export const TRANSIT_AGENCIES: AgencyDefinition[] = [
+  {
+    id: 'translink',
+    name: 'TransLink (Vancouver)',
+    slug: 'translink',
+    website: 'https://translink.ca',
+    logo: 'translink_logo.svg',
+    showName: false,
+    color: '#ffffff',
+    secondaryColor: '#005ea9',
+    textColor: '#005ea9',
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: ['mdb-1705'],
+    providers: ['TransLink Vancouver']
+  },
+  {
+    id: 'trimet',
+    name: 'TriMet',
+    slug: 'trimet',
+    website: 'https://trimet.org',
+    logo: 'trimet.svg',
+    showName: false,
+    color: '#094c8d',
+    secondaryColor: '#d1431f',
+    textColor: '#fff',
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
+    providers: ['TriMet']
+  },
+  {
+    id: 'soundtransit',
+    name: 'Sound Transit',
+    slug: 'soundtransit',
+    website: 'https://soundtransit.org',
+    logo: 'soundtransit.svg',
+    showName: false,
+    color: '#fff',
+    secondaryColor: '#00396f',
+    textColor: '#fff',
+    gtfsFeedIds: [],
+    gtfsRtFeedIds: [],
+    providers: ['Sound Transit', 'King County Metro']
+  },
   {
     id: 'wmata',
     name: 'WMATA',
@@ -59,46 +101,10 @@ export const TRANSIT_AGENCIES: AgencyDefinition[] = [
     providers: ['Arlington Transit']
   },
   {
-    id: 'dash',
-    name: 'DASH',
-    slug: 'dash',
-    website: 'https://www.dashbus.com',
-    gtfsFeedIds: [],
-    gtfsRtFeedIds: ['mdb-2843', 'mdb-2844', 'mdb-2845'],
-    providers: ['Alexandria Transit Company (DASH)', 'Alexandria Transit Company']
-  },
-  {
-    id: 'translink',
-    name: 'TransLink (Metro Vancouver)',
-    slug: 'translink',
-    website: 'https://translink.ca',
-    logo: 'translink_logo.svg',
-    showName: false,
-    color: '#ffffff',
-    secondaryColor: '#005ea9',
-    textColor: '#005ea9',
-    gtfsFeedIds: [],
-    gtfsRtFeedIds: ['mdb-1705'],
-    providers: ['TransLink Vancouver']
-  },
-  {
-    id: 'fraser-valley',
-    name: 'BC Transit Central Fraser Valley',
-    slug: 'fraser-valley',
-    website: 'https://www.bctransit.com/central-fraser-valley',
-    color: '#25964a',
-    textColor: '#ffffff',
-    gtfsFeedIds: [],
-    gtfsRtFeedIds: [],
-    providers: ['BC Transit (Central Fraser Valley| Chilliwack| Agassiz-Harrison | Hope)', 'BC Transit (Central Fraser Valley | Chilliwack | Agassiz-Harrison | Hope)']
-  },
-  {
     id: 'victoria',
-    name: 'BC Transit Victoria',
+    name: 'BC Transit Victoria Regional Transit',
     slug: 'victoria',
     website: 'https://www.bctransit.com/victoria',
-    color: '#0f2159ff',
-    textColor: '#ffffff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
     providers: ['BC Transit (Victoria Regional Transit System)']

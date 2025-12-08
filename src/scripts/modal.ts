@@ -45,9 +45,9 @@ export function initModals(): void {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      const openModal = document.querySelector('dialog[open]');
-      if (openModal) {
-        closeModal(openModal as HTMLDialogElement);
+      const openModalElement = document.querySelector('dialog[open]');
+      if (openModalElement) {
+        closeModal(openModalElement as HTMLDialogElement);
       }
     }
   });

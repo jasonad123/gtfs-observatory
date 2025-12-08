@@ -10,10 +10,11 @@ interface Props {
   color?: string;
   secondaryColor?: string;
   textColor?: string;
+  showName?: boolean; // Whether to display agency name text (defaults to true)
   feeds: ProcessedFeed[];
 }
 
-const { agencyId, agencyName, website, logo, color, secondaryColor, textColor, feeds } = Astro.props;
+const { agencyId, agencyName, website, logo, color, secondaryColor, textColor, showName = true, feeds } = Astro.props;
 
 // Dynamically import logo if specified
 const logos = import.meta.glob<{ default: ImageMetadata }>('../assets/agency-logos/*');
@@ -67,8 +68,7 @@ function getAuthenticationLabel(type: number): string {
   <article style={color ? `--agency-color: ${color}; --agency-secondary-color: ${secondaryColor || color}; --agency-text-color: ${textColor || 'inherit'}` : undefined}>
     <header>
       <a href="#close" aria-label="Close" rel="prev" class="close-modal"></a>
-      <div class="modal-header-top">
-        <h2>{agencyName}</h2>
+      <div class="header-content">
         {logoImage && (
           <Image
             src={logoImage}
@@ -79,18 +79,26 @@ function getAuthenticationLabel(type: number): string {
             loading="lazy"
           />
         )}
-      </div>
-      <div class="modal-header-links">
-        {website && (
-          <a href={website} target="_blank" rel="noopener">
-            Visit agency website
-          </a>
-        )}
-        <a href={`https://mobilitydatabase.org/feeds?q=${encodeURIComponent(agencyName).replace(/%20/g, "+")}`} target="_blank" rel="noopener" class="search-link">
-          Search on Mobility Database
-        </a>
+        {showName && <h2>{agencyName}</h2>}
       </div>
     </header>
+
+    <div class="header-actions">
+      {website && (
+        <a href={website} target="_blank" rel="noopener" class="header-action-btn" role="button">
+          Visit agency website
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+            <path fill="currentColor" fill-rule="evenodd" d="M362.666 149.333V320H320l-.001-97.831l-154.51 154.51l-30.169-30.17L289.829 192h-97.83v-42.666z"/>
+          </svg>
+        </a>
+      )}
+      <a href={`https://mobilitydatabase.org/feeds?q=${encodeURIComponent(agencyName).replace(/%20/g, "+")}`} target="_blank" rel="noopener" class="header-action-btn secondary" role="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+          <path fill="currentColor" fill-rule="evenodd" d="M469.297 439.13L347.982 317.816C370.466 288.907 384 252.707 384 213.334c0-94.104-76.562-170.667-170.666-170.667S42.667 119.23 42.667 213.334S119.23 384 213.334 384c39.373 0 75.573-13.534 104.481-36.018l121.316 121.315zm-255.963-97.796c-70.584 0-128-57.417-128-128c0-70.584 57.416-128 128-128c70.583 0 128 57.416 128 128c0 70.583-57.417 128-128 128"/>
+        </svg>
+        Search on Mobility Database
+      </a>
+    </div>
 
     {staticFeeds.length > 0 && (
       <section class="feed-section">
@@ -688,7 +696,7 @@ function getAuthenticationLabel(type: number): string {
   }
 
   .agency-modal header {
-    padding: 2rem 2rem 1rem;
+    padding: 1.25rem 1.25rem 1.25rem;
     background: linear-gradient(
       120deg,
       var(--agency-color, transparent) 0%,
@@ -698,49 +706,79 @@ function getAuthenticationLabel(type: number): string {
     );
     color: var(--agency-text-color, inherit);
     border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
-    margin: calc(-1 * var(--pico-block-spacing-vertical)) calc(-1 * var(--pico-block-spacing-horizontal)) 1rem;
+    margin: calc(-1 * var(--pico-block-spacing-vertical)) calc(-1 * var(--pico-block-spacing-horizontal)) 0.75rem;
   }
 
-  .modal-header-top {
+  .header-content {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .modal-header-top h2 {
-    flex: 1;
-    margin: 0;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .modal-agency-logo {
-    height: 4rem;
+    height: 3rem;
     width: auto;
-    margin-right: 2rem;
-    max-width: 250px;
+    max-width: 100%;
     object-fit: contain;
-    object-position: center center;
+    object-position: left center;
   }
 
   .agency-modal header h2 {
-    margin-bottom: 0;
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.3;
     color: inherit;
   }
 
-  .modal-header-links {
+  .header-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .header-action-btn {
+    flex: 1;
+    min-width: fit-content;
+    margin: 0;
+    padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
+    white-space: nowrap;
+    background-color: var(--pico-color-zinc-600);
+    border-color: var(--pico-color-zinc-600);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
-  .modal-header-links a {
-    color: var(--agency-text-color, var(--pico-primary));
+  .header-action-btn .btn-icon {
+    width: 1.1em;
+    height: 1.1em;
+    display: inline-block;
   }
 
-  .search-link {
-    color: var(--agency-text-color, var(--pico-muted-color));
-    opacity: 0.8;
+  @media (max-width: 600px) {
+    .header-action-btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  .header-action-btn:hover {
+    background-color: var(--pico-color-zinc-500);
+    border-color: var(--pico-color-zinc-500);
+  }
+
+  .header-action-btn.secondary {
+    background-color: #5d68c4;
+    border-color: #5d68c4;
+  }
+
+  .header-action-btn.secondary:hover {
+    background-color: #4d5bb5;
+    border-color: #4d5bb5;
   }
 
   .feed-section {

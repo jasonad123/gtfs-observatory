@@ -35,13 +35,20 @@ try {
     <>
       <div class="agency-grid">
         {agencies.map(agency => {
-          const activeFeedCount = agency.feeds.filter(f => f.status !== 'deprecated' && f.status !== 'inactive').length;
+          const activeFeeds = agency.feeds.filter(f => f.status !== 'deprecated' && f.status !== 'inactive');
+          const inactiveDeprecatedFeeds = agency.feeds.filter(f => f.status === 'deprecated' || f.status === 'inactive');
+          const activeFeedCount = activeFeeds.length;
           const displayCount = activeFeedCount > 0 ? activeFeedCount : agency.feeds.length;
+          const gtfsScheduleCount = activeFeeds.filter(f => f.type === 'gtfs').length;
+          const gtfsRealtimeCount = activeFeeds.filter(f => f.type === 'gtfs_rt').length;
           return (
             <AgencyCard
               agencyId={agency.id}
               name={agency.name}
               activeFeedCount={displayCount}
+              gtfsScheduleCount={gtfsScheduleCount}
+              gtfsRealtimeCount={gtfsRealtimeCount}
+              inactiveDeprecatedCount={inactiveDeprecatedFeeds.length}
               status={agency.overallStatus}
               website={agency.website}
               logo={agency.logo}
@@ -63,6 +70,7 @@ try {
           color={agency.color}
           secondaryColor={agency.secondaryColor}
           textColor={agency.textColor}
+          showName={agency.showName}
           feeds={agency.feeds}
         />
       ))}

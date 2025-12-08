@@ -5,7 +5,11 @@ interface Props {
   logoAlt?: string;
 }
 
-const { currentPath = '/', logoSrc = '', logoAlt = 'DC GTFS Dashboard' } = Astro.props;
+const {
+  currentPath = '/',
+  logoSrc = '/logo.svg',
+  logoAlt = 'GTFS Observatory logo'
+} = Astro.props;
 
 const navItems = [
   {
@@ -24,7 +28,7 @@ const navItems = [
 <header class="nav-header">
   <div class="nav-container">
     <a class="nav-logo" href="/" aria-label="Home">
-      <img src="/logo.svg" alt="" class="nav-logo-icon" aria-hidden="true" />
+      <img src={logoSrc} alt={logoAlt} class="nav-logo-icon" />
       <span class="nav-logo-text">GTFS <br>Observatory</span>
     </a>
 

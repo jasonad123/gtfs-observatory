@@ -45,21 +45,29 @@ Now go over to **Workers & Pages** in the Cloudflare Dashboard.
 5. Replace the "Hello World" code snippet with this code:
 
    ```js
+   async function triggerDeploy(request, env, ctx) {
+   const deployHook = "your.cloudflare.pages.deploy.hook.URL.here";
+
+   await fetch(deployHook, {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+   });
+
+   return "Deploy initiated";
+   }
+
    export default {
-   async scheduled(controller, env, ctx) {
-      ctx.waitUntil(
-         async () =>
-         await fetch('<replace-with-your-Pages-Deploy-Hook-URL>', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-         })
-      );
+   // See https://developers.cloudflare.com/workers/runtime-apis/handlers/scheduled/
+   async scheduled(event, env, ctx) {
+      ctx.waitUntil(triggerDeploy());
    },
-   async fetch(request) {
-      return new Response('This worker is for scheduled tasks only.', { status: 404 });
-   },
+   
+   // Kept disabled just to show it here.
+   async fetch(request, env, ctx) {
+      return new Response("Sorry about that. This worker only works on scheduled runs.");
+   }
    };
    ```
 
@@ -67,7 +75,7 @@ Now go over to **Workers & Pages** in the Cloudflare Dashboard.
 7. Click "Add" and select "Cron Triggers"
 8. Either select from a schedule or use a `cron` expression like `0 7 * * *` - which means every day at 07:00 UTC
 
-## Netlify (Secondary/Parallel)
+## Netlify
 
 ### Setup
 

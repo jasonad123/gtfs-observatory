@@ -29,9 +29,3 @@ jobs:
           # Create empty commit to trigger Cloudflare Pages deployment
           git commit --allow-empty -m "Scheduled rebuild - fetch latest data"
           git push
-
-      # # Optional: Trigger Netlify build hook if configured
-      # - name: Trigger Netlify build (if configured)
-      #   if: ${{ secrets.NETLIFY_BUILD_HOOK }}
-      #   run: |
-      #     curl -X POST -d {} ${{ secrets.NETLIFY_BUILD_HOOK }}

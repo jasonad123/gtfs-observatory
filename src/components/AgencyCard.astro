@@ -5,6 +5,9 @@ interface Props {
   agencyId: string;
   name: string;
   activeFeedCount: number; // Count excluding deprecated and inactive feeds
+  gtfsScheduleCount: number;
+  gtfsRealtimeCount: number;
+  inactiveDeprecatedCount: number;
   status: 'healthy' | 'issues' | 'error' | 'unknown';
   website?: string;
   logo?: string;
@@ -14,7 +17,7 @@ interface Props {
   showName?: boolean; // Whether to display agency name text (defaults to true)
 }
 
-const { agencyId, name, activeFeedCount, status, website, logo, color, secondaryColor, textColor, showName = true } = Astro.props;
+const { agencyId, name, activeFeedCount, gtfsScheduleCount, gtfsRealtimeCount, inactiveDeprecatedCount, status, website, logo, color, secondaryColor, textColor, showName = true } = Astro.props;
 
 const statusLabels = {
   healthy: 'Operational',
@@ -56,11 +59,25 @@ if (logo) {
     <p>
       <strong>{activeFeedCount}</strong> {activeFeedCount === 1 ? 'feed' : 'feeds'} available
     </p>
+    <p class="feed-type-count">
+      <strong>{gtfsScheduleCount}</strong> GTFS Schedule
+    </p>
+    <p class="feed-type-count">
+      <strong>{gtfsRealtimeCount}</strong> GTFS Realtime
+    </p>
+    {inactiveDeprecatedCount > 0 && (
+      <p class="inactive-count">
+        {inactiveDeprecatedCount} inactive/deprecated
+      </p>
+    )}
   </div>
   <footer>
     {website && (
       <a href={website} target="_blank" rel="noopener" class="website-btn" role="button">
         Visit the {name} website 
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="btn-icon" aria-hidden="true">
+            <path fill="currentColor" fill-rule="evenodd" d="M362.666 149.333V320H320l-.001-97.831l-154.51 154.51l-30.169-30.17L289.829 192h-97.83v-42.666z"/>
+          </svg>
       </a>
     )}
     <button class="view-details-btn" data-agency-id={agencyId}>
@@ -155,19 +172,36 @@ if (logo) {
   }
 
   .agency-info {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     flex: 1;
   }
 
   .agency-info p {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.25rem 0;
     font-size: 1.25rem;
+  }
+
+  .agency-info p:last-child {
+    margin-bottom: 0;
+  }
+
+  .agency-info .feed-type-count {
+    font-size: 0.95rem !important;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .agency-info .inactive-count {
+    font-size: 0.75rem !important;
+    margin: 0.35rem 0 0 0;
+    color: var(--pico-color-sand-500);
+    opacity: 0.7;
   }
 
   .agency-card footer {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
   }
 
   .website-btn {
@@ -177,6 +211,11 @@ if (logo) {
     text-align: center;
     background-color: var(--pico-color-zinc-600);
     border-color: var(--pico-color-zinc-600);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
   }
 
   .btn-icon {

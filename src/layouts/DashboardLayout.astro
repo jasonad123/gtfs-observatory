@@ -27,7 +27,7 @@ const { title } = Astro.props;
   </main>
   <footer class="container">
     <small>
-      Data sourced from <a href="https://mobilitydatabase.org" target="_blank" rel="noopener">MobilityData</a>
+      Data sourced from <a href="https://mobilitydatabase.org" target="_blank" rel="noopener" class = "mobility-db-link">Mobility Database</a>
       | Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })} ET | Made with <img src="/icons/ix--heart-filled.svg" alt="" class="heart-icon" aria-hidden="true"/> by<a href="https://github.com/jasonad123" target="_blank" rel="noopener"> Jason A</a>
     </small>
     <small>
@@ -58,6 +58,15 @@ const { title } = Astro.props;
 
   footer a:hover {
     text-decoration: underline;
+  }
+
+  .mobility-db-link {
+    color: #3e51a7;
+    text-decoration: none;
+  }
+
+  .mobility-db-link:hover {
+    text-decoration: none;
   }
 
   .heart-icon {

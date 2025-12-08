@@ -14,8 +14,9 @@ Built with Astro and powered by the MobilityData Mobility Database API.
 
 ## Prerequisites
 
-- Node.js 18 or higher
+- Node.js 20 or higher
 - A Mobility Database account with API credentials
+  - [Sign up for an account here](https://mobilitydatabase.org/)
 
 ## Setup
 
@@ -93,30 +94,38 @@ dc-gtfs-dashboard/
 └── package.json
 ```
 
-## How It Works
+## Configuration
 
-### Data Flow
+### Region Configuration
 
-1. At build time, the dashboard fetches all feeds from the MobilityData API
-2. Feeds are filtered to the region (in this case the DC metro area)
-3. Feeds are grouped by transit agency
-4. The page is statically generated with all feed information
-5. Modal interactions are handled client-side with vanilla JavaScript
+Regions are defined in [`src/lib/agencies.ts`](src/lib/agencies.ts).
+**Subdivisions** represent states/provinces/regions, while **countryCodes** are two-letter ISO 3166-1 alpha-2 codes.
+
+```typescript
+// Region filtering configuration
+// To customize for your region:
+// 1. Update subdivisions to match your state/province names as they appear in Mobility Database
+// 2. Update countryCodes to your country (e.g., ['CA'] for Canada, ['US', 'CA'] for both)
+// 3. Note: Feeds are matched if EITHER location OR provider matches (see isInRegion function)
+export const REGION_CONFIG = {
+  subdivisions: ['District of Columbia', 'Virginia', 'Maryland', 'British Columbia'] as string[],
+  countryCodes: ['US', 'CA'] as string[]
+};
+```
 
 ### Agency Configuration
 
-Agencies are defined in `src/lib/agencies.ts`. Each agency includes:
+Agencies are defined in [`src/lib/agencies.ts`](src/lib/agencies.ts). Each agency includes:
 
 - ID and display name
 - Website URL
-- Feed IDs (Mobility Database IDs in mdb-xxx format) - preferred for precise matching
 - Provider name mappings (used as fallback when feed IDs not available)
 - (optional) Colours and logo for branding purposes
 
-**Feed Matching Strategy**:
+**Feed Matching**:
 
-1. **Primary**: Match by MobilityData feed ID (most reliable)
-2. **Fallback**: Match by provider name (if IDs not specified)
+1. **Primary**: Match by provider name(s) - this enables automatic discovery of new feeds
+2. **Fallback**: Match by MobilityData feed ID (most reliable)
 
 To add a new agency:
 
@@ -142,14 +151,33 @@ To add a new agency:
 1. Visit https://mobilitydatabase.org
 2. Search for your agency
 3. Note the feed ID(s) from the feed details or URL (format: mdb-xxx or tld-xxx)
+    - For example - TransLink Vancouver's GTFS Schedule feed has a feed URL of `https://mobilitydatabase.org/feeds/gtfs/mdb-696` which gives feed ID of `mdb-696`
 4. Add to the `gtfsFeedIds` or `gtfsRtFeedIds` array in agency configuration
+
+## Customization
+
+### Styling
+
+The dashboard uses Pico CSS for minimal, semantic styling. To customize:
+
+1. Override Pico CSS variables in [`src/styles/global.css`](src/styles/global.css)
+2. Modify component styles in individual `.astro` files
+3. Add custom CSS classes as needed
+
+## How It Works
+
+### Data Flow
+
+1. At build time, the dashboard fetches all feeds from the MobilityData API
+2. Feeds are filtered to the region
+3. Feeds are grouped by transit agency
+4. The page is statically generated with all feed information
+5. Modal interactions are handled client-side with vanilla JavaScript
 
 ### Feed Processing
 
-The `getDCFeeds()` function:
-
-1. Fetches all US feeds from MobilityData
-2. Filters by region (currently set to District of Columbia, Maryland, Virginia)
+1. Fetches all feeds from Mobility Database based on the country code
+2. Filters by region
 3. Matches feeds to known regional agencies
 4. Processes feed metadata for display
 5. Groups feeds by agency with status indicators
@@ -176,10 +204,11 @@ This is a static site and can be deployed to:
 ### Cloudflare Pages (Recommended)
 
 1. Connect your repository to Cloudflare Pages
-2. Set build command: `pnpm run build`
-3. Set output directory: `dist`
-4. Add environment variable: `MOBILITY_API_KEY`
-5. Configure automatic rebuilds (recommended: every 6-24 hours) using Deploy Hooks
+2. Use the `Astro` framework preset or configure it manually:
+   * Set build command: `pnpm run build`
+   *  Set output directory: `dist`
+5. Add environment variable: `MOBILITY_API_KEY`
+6. Configure automatic rebuilds (recommended: every 6-24 hours) using Deploy Hooks
 
 ### Scheduled Builds
 
@@ -192,30 +221,15 @@ To keep feed data current, set up scheduled rebuilds:
 
 Example frequency: Every 6 hours during business hours
 
-## Customization
+See [DEPLOYMENT.md](/DEPLOYMENT.md) for more information.
 
-### Styling
-
-The dashboard uses Pico CSS for minimal, semantic styling. To customize:
-
-1. Override Pico CSS variables in `src/styles/global.css`
-2. Modify component styles in individual `.astro` files
-3. Add custom CSS classes as needed
-
-### Adding Features
-
-Potential enhancements:
-
-- Historical validation tracking (store results in Git or database)
-- GTFS-RT proxy endpoints (use Astro server endpoints)
-
-## MobilityData API
+## Mobility Database API
 
 This project uses the MobilityData Mobility Database API:
 
+- Website: https://mobilitydatabase.org
 - Docs: https://github.com/MobilityData/mobility-feed-api
 - Catalogs repo: https://github.com/MobilityData/mobility-database-catalogs
-- Database: https://mobilitydatabase.org
 
 API Rate Limits:
 

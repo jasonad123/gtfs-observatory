@@ -54,7 +54,7 @@ import Navigation from '../components/Navigation.astro';
         <summary>How often is the data updated?</summary>
         <div class="faq-answer">
           <p>This dashboard is rebuilt periodically to fetch the latest feed information from the MobilityData Mobility Database. The "Last updated" timestamp in the footer shows when the data was last refreshed.</p>
-          <p>Per MobilityData: <q>The Mobility Database fetches and stores new datasets once a day at midnight UTC.</q></p>
+          <p>Per MobilityData: <em><q>The Mobility Database fetches and stores new datasets once a day at midnight UTC.</q></em></p>
         </div>
       </details>
 
@@ -78,9 +78,9 @@ import Navigation from '../components/Navigation.astro';
       </details>
 
       <details>
-        <summary>Should I use MobilityData or Direct downloads?</summary>
+        <summary>Should I use Mobility Database or Direct downloads?</summary>
         <div class="faq-answer">
-          <p><strong>MobilityData hosted feeds</strong> are archived snapshots that are downloaded and stored by the MobilityData organization. They're reliable and don't require authentication.
+          <p><strong>Mobility Database hosted feeds</strong> are archived snapshots that are downloaded and stored by the Mobility Database organization. They're reliable and don't require authentication.
           These feeds are all run through the <a href = "https://gtfs-validator.mobilitydata.org">canonical GTFS validator</a> to determine if they meet the specification.</p>
           <p><strong>Direct downloads</strong> come straight from the transit agency and are typically more up-to-date, but may require authentication and have not been directly validated.</p>
           <p>For most applications, MobilityData hosted feeds are perfectly fine. Use direct feeds if you need the absolute latest data.</p>

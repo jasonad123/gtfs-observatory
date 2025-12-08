@@ -29,8 +29,8 @@ export interface AgencyDefinition {
 // 2. Update countryCodes to your country (e.g., ['CA'] for Canada, ['US', 'CA'] for both)
 // 3. Note: Feeds are matched if EITHER location OR provider matches (see isInRegion function)
 export const REGION_CONFIG = {
-  subdivisions: ['District of Columbia', 'Virginia', 'Maryland'] as string[],
-  countryCodes: ['US'] as string[]
+  subdivisions: ['District of Columbia', 'Virginia', 'Maryland', 'British Columbia'] as string[],
+  countryCodes: ['US', 'CA'] as string[]
 };
 
 export const TRANSIT_AGENCIES: AgencyDefinition[] = [

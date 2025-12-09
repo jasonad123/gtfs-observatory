@@ -1,6 +1,6 @@
 # GTFS Observatory
 
-![Multi-agency example of the dashboard](/dmv-example-dashboard.png)
+![Multi-agency example of the dashboard](/standard-dashboard.png)
 
 A *semi*-real-time dashboard for monitoring GTFS and GTFS-RT feeds.
 Built with Astro and powered by the MobilityData Mobility Database API.

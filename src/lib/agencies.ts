@@ -74,7 +74,7 @@ export const TRANSIT_AGENCIES: AgencyDefinition[] = [
     textColor: '#fff',
     gtfsFeedIds: [],
     gtfsRtFeedIds: [],
-    providers: ['Sound Transit', 'King County Metro']
+    providers: ['Sound Transit']
   },
   {
     id: 'wmata',
